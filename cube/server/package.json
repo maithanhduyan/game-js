@@ -1,0 +1,25 @@
+{
+  "name": "cube-server",
+  "version": "1.0.0",
+  "description": "Cube Server",
+  "main": "index.js",
+  "scripts": {
+    "run-dev": "node index.js",
+    "test": "test"
+  },
+  "keywords": [
+    "cube",
+    "game"
+  ],
+  "author": "Mai Thành Duy An",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "crypto-js": "^4.1.1",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "request": "^2.88.2",
+    "sqlite3": "^5.1.6"
+  }
+}
