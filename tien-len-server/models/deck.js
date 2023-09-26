@@ -2,8 +2,8 @@ const { Card } = require('./card'); // Import Card from card.js
 
 class Deck {
     constructor() {
-        this.suits = ["Hearts", "Diamonds", "Clubs", "Spades"];
-        this.ranks = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"];
+        this.suits = ["spades", "clubs", "diamonds","hearts" ];
+        this.ranks = [ "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace","2"];
         this.cards = [];
 
         this.initializeDeck();

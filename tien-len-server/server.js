@@ -6,9 +6,8 @@ const bodyParser = require('body-parser');
 const { Deck } = require('./models/deck'); // Import Deck from desk.js
 const app = express();
 const server = http.createServer(app);
-const io = socketIo(server);
-
 const PORT = process.env.PORT || 3000;
+const io = socketIo(server);
 
 // Đối tượng lưu trữ thông tin về các phòng chơi
 const rooms = {};
@@ -89,6 +88,53 @@ app.post('/users', (req, res) => {
             }
             res.status(201).json({ message: 'User created successfully' });
         });
+    });
+});
+
+// Hàm xử lý khi một người chơi kết nối với WebSocket
+io.on('connection', (socket) => {
+    console.log('Người chơi đã kết nối với WebSocket');
+
+    // Xử lý sự kiện khi một người chơi gia nhập phòng
+    socket.on('joinRoom', (roomId, playerName) => {
+        // Kiểm tra xem phòng chơi có tồn tại hay không
+        if (!rooms[roomId]) {
+            socket.emit('joinRoomError', 'Phòng chơi không tồn tại.');
+            return;
+        }
+
+        // Kiểm tra xem phòng chơi đã đủ người chơi hay chưa
+        if (rooms[roomId].players.length >= 4) {
+            socket.emit('joinRoomError', 'Phòng chơi đã đủ 4 người chơi.');
+            return;
+        }
+
+        // Thêm người chơi vào phòng
+        rooms[roomId].players.push(playerName);
+
+        // Thông báo cho tất cả người chơi trong phòng về sự gia nhập
+        socket.join(roomId);
+        io.to(roomId).emit('playerJoined', playerName);
+    });
+
+    // Xử lý sự kiện khi một người chơi đánh bài, bạn có thể thêm sự kiện này tùy theo trò chơi
+    socket.on('playCard', (roomId, playerName, card) => {
+        // Xử lý logic đánh bài
+        // Gửi thông báo về việc đánh bài cho tất cả người chơi trong phòng
+        io.to(roomId).emit('cardPlayed', playerName, card);
+    });
+
+    // Xử lý sự kiện khi một người chơi thoát phòng
+    socket.on('leaveRoom', (roomId, playerName) => {
+        // Xử lý logic khi người chơi rời phòng
+        // Gửi thông báo về việc rời phòng cho tất cả người chơi trong phòng
+        io.to(roomId).emit('playerLeft', playerName);
+    });
+
+    // Xử lý sự kiện khi một người chơi ngắt kết nối
+    socket.on('disconnect', () => {
+        console.log('Người chơi đã ngắt kết nối');
+        // Xử lý logic khi người chơi ngắt kết nối
     });
 });
 
