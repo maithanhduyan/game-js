@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Socket.io Game Room</title>
+</head>
+
+<body>
+    <h1>Socket.io Game Room</h1>
+
+    <!-- Form để nhập tên người chơi và tạo/join phòng -->
+    <form id="joinForm">
+        <label for="playerName">Tên người chơi:</label>
+        <input type="text" id="playerName" required>
+        <label for="roomName">Tên phòng:</label>
+        <input type="text" id="roomName" required>
+        <button type="submit">Tham gia phòng</button>
+    </form>
+
+    <!-- Hiển thị danh sách phòng -->
+    <h2>Danh sách phòng</h2>
+    <ul id="roomList"></ul>
+
+    <!-- Hiển thị người chơi trong phòng -->
+    <h2>Người chơi trong phòng</h2>
+    <ul id="playerList"></ul>
+
+    <!-- Chat box -->
+    <div id="chatBox">
+        <h2>Chat</h2>
+        <ul id="messageList"></ul>
+        <input type="text" id="messageInput" placeholder="Nhập tin nhắn">
+        <button id="sendMessage">Gửi</button>
+    </div>
+
+    <!-- <script src="/socket.io/socket.io.js"></script> -->
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        const socket = io('http://localhost:3000');
+
+        // Xử lý sự kiện khi form được submit
+        $('#joinForm').submit((e) => {
+            e.preventDefault();
+            const playerName = $('#playerName').val();
+            const roomName = $('#roomName').val();
+            socket.emit('joinRoom', roomName, playerName);
+            $('#joinForm')[0].reset();
+        });
+
+        // Hiển thị danh sách phòng
+        socket.on('roomList', (rooms) => {
+            const roomList = $('#roomList');
+            roomList.empty();
+            rooms.forEach((room) => {
+                roomList.append(`<li>${room}</li>`);
+            });
+        });
+
+        // Hiển thị người chơi trong phòng
+        socket.on('playerJoined', (players) => {
+            const playerList = $('#playerList');
+            playerList.empty();
+            players.forEach((player) => {
+                playerList.append(`<li>${player.name}</li>`);
+            });
+        });
+
+        // Hiển thị tin nhắn
+        socket.on('message', (data) => {
+            const messageList = $('#messageList');
+            messageList.append(`<li>${data.sender}: ${data.text}</li>`);
+        });
+
+        // Xử lý sự kiện khi gửi tin nhắn
+        $('#sendMessage').click(() => {
+            const messageInput = $('#messageInput');
+            const roomName = $('#roomName').val();
+            const message = messageInput.val();
+            socket.emit('sendMessage', roomName, message);
+            messageInput.val('');
+        });
+
+        // Xử lý sự kiện khi người chơi rời phòng
+        socket.on('playerLeft', (players) => {
+            const playerList = $('#playerList');
+            playerList.empty();
+            players.forEach((player) => {
+                playerList.append(`<li>${player.name}</li>`);
+            });
+        });
+        
+    </script>
+</body>
+
+</html>
