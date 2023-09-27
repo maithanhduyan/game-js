@@ -1,7 +1,6 @@
 import Phaser from 'phaser'
 import socket from '../sockets/send_msg';
 import Deck from '../models/deck'
-import { directions, gameRules, cardOptions } from '../game-options';
 
 class PlayGame extends Phaser.Scene {
 
