@@ -5,14 +5,8 @@ const host = process.env.HOST || 'localhost';
 const port = process.env.PORT || 3000;
 const path = require('path')
 
-// Cấu hình CORS để cho phép từ các nguồn cụ thể
-const corsOptions = {
-    origin: ['http://localhost:3001', 'http://localhost:8000'],
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true,
-    optionsSuccessStatus: 204,
-};
-app.use(cors(corsOptions));
+
+app.use(cors());
 
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
@@ -52,9 +46,9 @@ io.on('connection', (socket) => {
 
         // Xóa người chơi ra khỏi danh sách
         rooms[roomName] = rooms[roomName].filter(player => player.id !== socket.id);
-
+        console.log('Người chơi rời khỏi phòng');
         // Gửi thông báo cho tất cả người chơi trong phòng
-        io.to(roomName).emit('playerLeft', rooms[roomName]);
+        io.to(roomName).emit('playerLeft', rooms[roomName],);
 
         // Nếu không còn người chơi trong phòng, xóa phòng
         if (rooms[roomName].length === 0) {

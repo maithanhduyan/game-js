@@ -72,12 +72,11 @@
         <input type="text" id="roomName" value="Room-123" required><br/>
         <button type="submit">Tạo phòng</button>
     </form>
+    <button id="leaveRoom" type="button">Rời phòng</button>
     <!-- Hiển thị danh sách phòng -->
     <p>Danh sách phòng</p>
-    <form id="leaveForm">
-        <ul id="roomList"><button type="submit">Vào</button></ul>
-        <button type="submit">Rời phòng</button>
-    </form>
+    <ul id="roomList"><button type="submit">Vào</button></ul>
+    
     <!-- Hiển thị người chơi trong phòng -->
     <p>Người chơi trong phòng</p>
     <ul id="playerList"></ul>
@@ -120,9 +119,12 @@
         });
 
         //
-        $('#leaveForm').submit((e)=>{
+        $('#leaveRoom').on('click',(e)=>{
             e.preventDefault();
-            const roomName = $('')
+            const playerName = $('#playerName').val();
+            const roomName = $('#roomName').val();
+            socket.emit('leaveRoom',roomName);
+            console.log('Đã Rời phòng');
         });
 
         // Hiển thị danh sách phòng
@@ -147,6 +149,7 @@
         // Xử lý sự kiện khi người chơi rời phòng
         socket.on('playerLeft', (players) => {
             const playerList = $('#playerList');
+            console.log('Đã rời khỏi');
             playerList.empty();
             players.forEach((player) => {
                 playerList.append(`<li>${player.name}</li>`);
