@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { BootGame, PlayGame } from './scenes';
 import { directions, gameRules, cardOptions } from './game-options';
+import socket from './sockets/send_msg' 
 
 let gameSreenWidth, gameSreenHeight;
 
@@ -17,15 +18,13 @@ function onDeviceReady() {
             width: gameSreenWidth,
             height: gameSreenHeight,
         },
-        scene: [BootGame, PlayGame]
+        scene: [BootGame, PlayGame],
     }
 
     const game = new Phaser.Game(gameConfig);
     window.focus();
+    // socket.emit('chat message','Index Connected.')
 
-    console.log('Kết nối websocket');
-    const socket = new WebSocket('ws://localhost:3000');
 }
-
 window.onload = onDeviceReady
 document.addEventListener('deviceready', onDeviceReady)

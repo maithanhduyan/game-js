@@ -1,4 +1,5 @@
 import Phaser from 'phaser'
+import socket from '../sockets/send_msg';
 import Deck from '../models/deck'
 import { directions, gameRules, cardOptions } from '../game-options';
 
@@ -13,7 +14,15 @@ class PlayGame extends Phaser.Scene {
         this.deck = new Deck(this);
     }
     create() {
-        console.log('enter game')
+        // console.log('enter game')
+        // socket.emit('chat message','Enter game.');
+        socket.emit('joinRoom','Room-123','An Phaser');
+        socket.on('chat message',(msg)=>{
+            console.log('Server response:' + msg);
+        })
+
+
+
         // Tính kích thước của màn hình
         const screenWidth = this.cameras.main.width;
         const screenHeight = this.cameras.main.height;
@@ -46,7 +55,7 @@ class PlayGame extends Phaser.Scene {
             ease: 'Bounce.easeOut', // Loại easing (có thể thay đổi) Bounce.easeOut,Linear,
             onComplete: () => {
                 // Xử lý khi animation hoàn thành (nếu cần)
-                console.log('hoàn thành')
+                // console.log('hoàn thành')
             }
         });
 
@@ -76,7 +85,7 @@ class PlayGame extends Phaser.Scene {
 
     }
     update() {
-        // console.log('Camera Width: '+ this.cameras.main.height);
+        
     }
 
 }

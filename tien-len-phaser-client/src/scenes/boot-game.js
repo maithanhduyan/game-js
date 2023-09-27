@@ -1,11 +1,12 @@
 import Phaser from 'phaser'
-
+import socket from '../sockets/send_msg'
 import cardPng from '../assets/cards.png'
 import cardJson from '../assets/cards.json'
 
 class BootGame extends Phaser.Scene {
     constructor() {
         super('BootGame')
+        
     }
 
     preload() {
@@ -14,8 +15,9 @@ class BootGame extends Phaser.Scene {
     }
 
     create() {
-        // TODO: Tạo chức năng loading cho game   
-
+        // TODO: Tạo chức năng loading cho game  
+        // socket.emit('chat message','BootGame Connected.') 
+        // this.game.socket.emit('chat message', 'input.value');
         // TODO: Tạo nút vào phòng chơi
         this.scene.start('PlayGame');
 
