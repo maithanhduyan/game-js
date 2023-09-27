@@ -62,4 +62,5 @@ apiRouter.post('/join-room/:roomId', (req, res) => {
 
 // Xác thực người chơi và tạo token JWT
 apiRouter.post('/login', authenController.authen);
+apiRouter.post('/signup', userController.createUser);
 module.exports = apiRouter 

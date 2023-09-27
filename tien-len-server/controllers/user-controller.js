@@ -1,8 +1,18 @@
 const User = require('../models/user')
 
-module.exports={
-    getAll:function(req,res){
+module.exports = {
+    getAll: function (req, res) {
         User.getAllUsers((err, users) => {
+            if (err) {
+                res.status(500).json({ error: err.message });
+                return;
+            }
+            res.json({ users });
+        });
+    },
+    createUser: function (req, res) {
+        const { username, password } = req.body;
+        User.createUser(username, password, (err, users) => {
             if (err) {
                 res.status(500).json({ error: err.message });
                 return;

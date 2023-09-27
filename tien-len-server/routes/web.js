@@ -10,6 +10,9 @@ webRouter.get('/', (req, res) => {
 webRouter.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'public', 'login.html'));
 });
+webRouter.get('/signup', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'public', 'signup.html'));
+});
 
 webRouter.get("/healthCheck", (req, res) => {
     res.send('Health Check: OK')
