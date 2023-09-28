@@ -1,8 +1,8 @@
 class Card {
     constructor(suit, rank) {
-        this.name = '';
         this.suit = suit;
         this.rank = rank;
+        this.name = `${suit}${rank}`;
     }
 
     toString() {

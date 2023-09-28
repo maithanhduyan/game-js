@@ -2,6 +2,7 @@ class Card {
     constructor(suit, rank) {
         this.suit = suit;
         this.rank = rank;
+        this.name = `${this.suit}${this.rank}`;
     }
 
     toString() {
@@ -9,6 +10,4 @@ class Card {
     }
 }
 
-module.exports = {
-    Card
-};
+module.exports = Card;
