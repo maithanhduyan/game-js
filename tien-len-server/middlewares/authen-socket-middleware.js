@@ -16,6 +16,7 @@ function authenticateSocket(socket, next) {
 
         // Lưu thông tin người chơi vào đối tượng socket để sử dụng sau này
         socket.username = decoded.username;
+        socket.userid = decoded.userid;
 
         next();
     });

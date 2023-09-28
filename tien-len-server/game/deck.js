@@ -1,13 +1,10 @@
-const { Card } = require('./card'); // Import Card from card.js
+const Card = require('./card'); // Import Card from card.js
 
 class Deck {
     constructor() {
-        this.suits = ["spades", "clubs", "diamonds","hearts" ];
-        this.ranks = [ "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace","2"];
+        this.suits = ["spades", "clubs", "diamonds", "hearts"];
+        this.ranks = ["3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace", "2"];
         this.cards = [];
-
-        this.initializeDeck();
-        this.shuffleDeck();
     }
 
     initializeDeck() {
@@ -27,10 +24,6 @@ class Deck {
 
     dealToPlayers(numPlayers, numCardsPerPlayer) {
         const hands = [];
-        for (let i = 0; i < numPlayers; i++) {
-            hands.push([]);
-        }
-
         for (let i = 0; i < numCardsPerPlayer; i++) {
             for (let j = 0; j < numPlayers; j++) {
                 const card = this.cards.pop();

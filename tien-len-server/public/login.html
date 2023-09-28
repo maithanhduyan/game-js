@@ -11,9 +11,9 @@
     <h1>Login</h1>
     <form id="loginForm">
         <label for="username">Username:</label>
-        <input type="text" id="username" name="username" value="test" required><br><br>
+        <input type="text" id="username" name="username" required><br><br>
         <label for="password">Password:</label>
-        <input type="password" id="password" name="password"  value="test123%$#" required><br><br>
+        <input type="password" id="password" name="password" required><br><br>
         <button type="submit">Login</button>
     </form>
 
@@ -33,15 +33,18 @@
                 fetch("/api/login", {
                     method: "POST",
                     headers: {
-                        "Content-Type": "application/json"
+                        "Content-Type": "application/json",
                     },
                     body: JSON.stringify({ username, password })
                 })
                     .then(response => response.json())
                     .then(data => {
-                        if (data.token) {
+                    console.log(`Server trả dữ liệu: ${data}`);
+                    console.log(data);
+                        if (data.tokenName) {
                             // Xác thực thành công, lưu token vào Local Storage và chuyển hướng
-                            localStorage.setItem("token", data.token);
+                            console.log(`Token name: ${data.tokenName} with: ${data.token}`)
+                            localStorage.setItem(data.tokenName, data.token);
                             window.location.href = "/"; // Điều hướng đến trang sau khi đăng nhập thành công
                         } else {
                             // Xác thực không thành công, hiển thị thông báo lỗi

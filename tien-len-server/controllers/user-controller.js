@@ -12,12 +12,13 @@ module.exports = {
     },
     createUser: function (req, res) {
         const { username, password } = req.body;
-        User.createUser(username, password, (err, users) => {
+        User.createUser(username, password, (err, user) => {
             if (err) {
                 res.status(500).json({ error: err.message });
                 return;
             }
-            res.json({ users });
+            // Trả dữ liệu cho client
+            res.json({ user });
         });
     }
 }

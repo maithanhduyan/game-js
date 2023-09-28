@@ -1,14 +1,37 @@
 // game-socket.js
-const { log } = require('console');
+// Đối tượng lưu trữ thông tin về các phòng chơi
 
-function initializeGameSocket(io, rooms, maxNumPlayers) {
+const Deck = require('../game/main-game')
+const rooms = {};
+maxNumPlayers = 4;
+function initializeGameSocket(io) {
     io.on('connection', (socket) => {
         socket.on('authentication', (token) => {
             // Kiểm tra token ở đây và xác thực client
             // Nếu token hợp lệ, cho phép client tham gia vào phòng chơi hoặc thực hiện các hoạt động khác
             // Nếu không hợp lệ, có thể ngắt kết nối hoặc thực hiện xử lý khác
+            if (token) {
+                console.log(`Kết nối hợp lệ. ${token}`)
+            } else {
+                console.log(`Kết nối không hợp lệ. ${token}`)
+            }
+
+            // Giả sử bạn đã kiểm tra token và xác thực thành công
+            const authenticated = true; // Đã xác thực thành công
+
+            // // Gửi phản hồi xác thực về máy khách
+            // socket.emit('authenticationResponse', authenticated);
+
+            // if (authenticated) {
+            //     // Nếu xác thực thành công, bạn có thể thực hiện các hoạt động sau đây
+            //     // Ví dụ: Cho phép tham gia vào phòng chơi, gửi danh sách phòng, v.v.
+            // } else {
+            //     // Nếu xác thực thất bại, bạn có thể ngắt kết nối hoặc thực hiện xử lý khác
+            //     // Ví dụ: Ngắt kết nối socket
+            //     socket.disconnect();
+            // }
         });
-        console.log(`Client connected: ${socket.id}`);
+        console.log(`Client connected on socketid: ${socket.id} . ${socket.roomName} with username: ${socket.usename}`);
 
         // Gửi danh sách phòng cho client
         socket.emit('roomList', Object.keys(rooms));
@@ -40,7 +63,18 @@ function initializeGameSocket(io, rooms, maxNumPlayers) {
         });
 
         // Chia bài cho người chơi
-        socket.on('deal', (roonName, playerName, playerHands) => { });
+        socket.on('deck-deal-card', (roonName, playerName, playerHands) => {
+            if (true) {
+                console.log(`Room: ${roonName} . player(${playerName})`);
+                const MainGame = require('../game/main-game');
+
+                const game = new MainGame();
+                game.initializeGame(4); // Khởi tạo trò chơi với 4 người chơi
+                const hand = game.printPlayerHands(); // In tay của từng người chơi
+                console.log(`${socket.usename}`)
+                io.emit('deck-deal-card', hand.toString());
+            }
+        });
 
         // Khi một người chơi rời phòng
         socket.on('leaveRoom', (roomName) => {

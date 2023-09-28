@@ -1,9 +1,9 @@
 const bcrypt = require('bcrypt');
-
 const db = require('../data/db')
 
 class User {
     constructor(username, password, score = 0) {
+        this.id = -1;
         this.username = username;
         this.password = password;
         this.score = score;
@@ -27,7 +27,7 @@ class User {
                 return callback(null, null); // Không tìm thấy người dùng
             }
             const user = results[0];
-            console.log(user)
+            // console.log(user)
             callback(null, user);
         });
     }

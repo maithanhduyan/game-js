@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Signup</title>
 </head>
 
 <body>
@@ -39,10 +39,12 @@
                 })
                     .then(response => response.json())
                     .then(data => {
-                        if (data.token) {
+                        console.log(`Server trả dữ liệu: ${data.user.username}`)
+                        if (data.user.username) {
                             // Xác thực thành công, 
-
-                            window.location.href = "/login"; // Điều hướng đến trang sau khi đăng nhập thành công
+                            console.log(`User: ${data.user.username} đăng ký thành công.`)
+                            messageDiv.innerHTML ="<br>Đăng ký thành công. Vui lòng <a href='/login'>Login ở đây</a>";
+                            // window.location.href = "/login"; // Điều hướng đến trang sau khi đăng nhập thành công
                         } else {
                             // Xác thực không thành công, hiển thị thông báo lỗi
                             messageDiv.textContent = "Đăng ký không thành công. Vui lòng thử lại.";
