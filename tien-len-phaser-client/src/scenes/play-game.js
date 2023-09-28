@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import socket from '../sockets/send_msg';
+// import socket from '../sockets/send_msg';
 import Deck from '../models/deck'
 
 class PlayGame extends Phaser.Scene {
@@ -7,20 +7,13 @@ class PlayGame extends Phaser.Scene {
     constructor() {
         super('PlayGame')
         this.deck = null;
+
     }
     preload() {
         // Láy dữ liệu từ Deck
         this.deck = new Deck(this);
     }
     create() {
-        // console.log('enter game')
-        // socket.emit('chat message','Enter game.');
-        socket.emit('joinRoom','Room-123','An Phaser');
-        socket.on('chat message',(msg)=>{
-            console.log('Server response:' + msg);
-        })
-
-
 
         // Tính kích thước của màn hình
         const screenWidth = this.cameras.main.width;
@@ -30,61 +23,139 @@ class PlayGame extends Phaser.Scene {
         const cardWidth = screenWidth / 10; // Ví dụ: chia 1/10 kích thước màn hình
         const cardHeight = cardWidth * 1.4; // Ví dụ: giữ tỷ lệ khung hình
 
-        // Nhận bài từ server
-        // const _13La = gameRules.cardNum;
-        // let x = cardOptions.cardWidth;
-        // let y = this.cameras.main.height - cardOptions.cardHeight;
-        // this.add.image(x, y, 'cards', Phaser.Math.RND.pick(this.deck.cards)).setInteractive();
-        // Tạo một lá bài (ví dụ)
-        const card = this.add.image(0, 0, 'cards', Phaser.Math.RND.pick(this.deck.cards)); // Thay 'card' bằng tên texture thích hợp
-        // Đặt kích thước cho lá bài
-        card.setScale(cardWidth / card.width, cardHeight / card.height);
 
-        // Đặt vị trí của lá bài (ví dụ: giữ nguyên trung tâm)
-        card.setPosition(screenWidth / 2, screenHeight - (cardHeight / 2));
+        this.deck.shuffle();
 
-        // Thêm lá bài vào scene
-        this.add.existing(card);
+        // Chia 13 lá bài cho người chơi
+        const numCardsToDeal = 13;
+        const selectedCards = []; // Danh sách để lưu các lá bài được chọn
+        const handCards = []; // Danh sách để lưu các lá bài người chơi
+        const cardSpacing = cardWidth / 2; // Khoảng cách giữa các lá bài
+        let initialX = (screenWidth - (numCardsToDeal * (cardWidth - cardSpacing) + cardSpacing)) / 2;
+        for (let i = 0; i < numCardsToDeal; i++) {
+            let selectedCard = null; // Biến để theo dõi lá bài đã được chọn
+            const card = this.add.image(
+                initialX + i * (cardWidth - cardSpacing),
+                screenHeight - cardHeight / 2,
+                'cards',
+                this.deck.cards[i]
+            );
+            handCards.push(card);
 
-        // Tạo animation cho lá bài di chuyển từ trên xuống dưới
-        const cardAnimation = this.tweens.add({
-            targets: card,
-            y: cardHeight,
-            duration: 300, // Thời gian di chuyển (ms)
-            ease: 'Bounce.easeOut', // Loại easing (có thể thay đổi) Bounce.easeOut,Linear,
-            onComplete: () => {
-                // Xử lý khi animation hoàn thành (nếu cần)
-                // console.log('hoàn thành')
+            // Đặt kích thước cho lá bài
+            card.setScale(cardWidth / card.width, cardHeight / card.height);
+            // Thêm sự kiện pointerdown cho lá bài
+            card.setInteractive();
+            card.on('pointerdown', () => {
+                if (selectedCard === card) {
+                    // Nếu lá bài đã được chọn trước đó, bỏ chọn nó và trả lại màu bình thường
+                    selectedCard.clearTint();
+                    selectedCard.y += 20; // Trả lại vị trí ban đầu
+                    selectedCard = null; // Bỏ chọn lá bài
+                } else {
+                    if (selectedCard) {
+                        // Nếu đã có lá bài được chọn trước đó, trả về vị trí và màu bình thường cho lá bài đó
+                        selectedCard.clearTint();
+                        selectedCard.y += 10; // Trả lại vị trí ban đầu
+                    }
+                    selectedCards.push(card);
+                    console.log(card.frame.name);
+                    // Đặt lá bài hiện tại là lá bài được chọn
+                    selectedCard = card;
+
+                    // Thay đổi viền và nâng lá bài lên
+                    card.setTint(0xffff00); // Màu vàng
+                    card.y -= 20; // Nâng lên 20 pixels
+                }
+            });
+
+            // Thêm lá bài vào scene
+            this.add.existing(card);
+
+        }
+        // Tạo nút BỎ QUA'
+        const skipButton = this.add.text(
+            screenWidth - 600,
+            screenHeight - 170,
+            'BỎ QUA',
+            {
+                fontSize: '16px',
+                backgroundColor: '#CD9933', // Màu nút
+                padding: {
+                    x: 10,
+                    y: 10
+                }
             }
+        );
+        skipButton.setOrigin(0.5); // Đặt gốc của nút ở giữa
+        // Thêm sự kiện cho nút Đánh
+        skipButton.setInteractive();
+        skipButton.on('pointerdown', () => {
+            console.log('BỎ QUA')
+        });
+        // Tạo nút Đánh
+        const playButton = this.add.text(
+            screenWidth - 400,
+            screenHeight - 170,
+            'ĐÁNH BÀI',
+            {
+                fontSize: '16px',
+                backgroundColor: '#3AB54A', // Màu nút
+                padding: {
+                    x: 10,
+                    y: 10
+                }
+            }
+        );
+        playButton.setOrigin(0.5); // Đặt gốc của nút ở giữa
+
+        // Thêm sự kiện cho nút Đánh
+        playButton.setInteractive();
+        playButton.on('pointerdown', () => {
+            console.log('ĐÁNH BÀI')
+            // console.log(selectedCards);
+            for (let i = 0; i < selectedCards.length; i++) {
+                console.log('Đánh' + selectedCards[i].frame.name)
+                selectedCards[i].clearTint(); // Xóa màu ví
+                selectedCards[i].y = screenHeight / 2; // Đặt lá bài vào giữa màn hình theo trục dọc
+                // Đặt kích thước cho lá bài
+                selectedCards[i].setScale(cardWidth / selectedCards[i].width * 0.7, cardHeight / selectedCards[i].height * 0.7);
+            }
+            handCards.forEach(card => {
+                console.log(card.frame.name)
+            });
+
         });
 
-        // Bắt đầu animation
-        cardAnimation.play();
-
-        // TODO: Chia bài từ server
-        // for (let i = 0; i < _13La; i++) {
-        //     this.add.image(x, y, 'cards', Phaser.Math.RND.pick(this.deck.cards)).setInteractive();
-        //     x += 40;
-        // }
-
-        // this.input.on('gameobjectdown', function (pointer, gameObject) {
-        //     //  Will contain the top-most Game Object (in the display list)
-        //     this.tweens.add({
-        //         targets: gameObject,
-        //         x: { value: 400, duration: 1500, ease: 'Power2' },
-        //         y: { value: 300, duration: 500, ease: 'Bounce.easeOut', delay: 150 },
-        //         onComplete: () => {
-        //             // Xử lý khi chia xong bài (hoàn thành tween)
-        //             console.log('Đã chia bài xong');
-        //         },
-        //     });
-
-        // }, this);
+        // Tạo nút Xếp Bài
+        const sortButton = this.add.text(
+            screenWidth - 200,
+            screenHeight - 170,
+            'XẾP BÀI',
+            {
+                fontSize: '16px',
+                backgroundColor: '#9D0B0E', // Màu nút
+                padding: {
+                    x: 10,
+                    y: 10
+                }
+            }
+        );
+        sortButton.setOrigin(0.5); // Đặt gốc của nút ở giữa
+        sortButton.setInteractive();
+        sortButton.on('pointerdown', () => {
+            console.log('Xếp bài')
+        });
 
 
+
+        // Thêm nút vào scene
+        this.add.existing(skipButton);
+        this.add.existing(playButton);
+        this.add.existing(sortButton);
     }
     update() {
-        
+
     }
 
 }
