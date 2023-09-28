@@ -109,17 +109,20 @@ class PlayGame extends Phaser.Scene {
         );
         playButton.setOrigin(0.5); // Đặt gốc của nút ở giữa
 
-        // Thêm sự kiện cho nút Đánh
+        // Thêm sự kiện cho nút ĐÁNH BÀI
         playButton.setInteractive();
         playButton.on('pointerdown', () => {
             console.log('ĐÁNH BÀI')
-            // console.log(selectedCards);
+            let initialX = (screenWidth - (selectedCards.length * (cardWidth - cardSpacing) + cardSpacing)) / 2;
             for (let i = 0; i < selectedCards.length; i++) {
                 console.log('Đánh' + selectedCards[i].frame.name)
-                selectedCards[i].clearTint(); // Xóa màu ví
-                selectedCards[i].y = screenHeight / 2; // Đặt lá bài vào giữa màn hình theo trục dọc
-                // Đặt kích thước cho lá bài
+                selectedCards[i].clearTint(); 
+                // Đặt kích thước cho lá bài nhỏ lại
                 selectedCards[i].setScale(cardWidth / selectedCards[i].width * 0.7, cardHeight / selectedCards[i].height * 0.7);
+                selectedCards[i].y = screenHeight / 2; // Đặt lá bài vào giữa màn hình theo trục dọc
+                // Đặt lá bài vào giữa màn hình theo trục 
+                selectedCards[i].x =  initialX + i * (cardWidth - (cardSpacing));
+                this.children.bringToTop(selectedCards[i])
             }
             handCards.forEach(card => {
                 console.log(card.frame.name)
