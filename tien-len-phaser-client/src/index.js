@@ -1,7 +1,5 @@
 import Phaser from 'phaser';
 import { BootGame, PlayGame } from './scenes';
-import { directions, gameRules, cardOptions } from './game-options';
-import socket from './sockets/send_msg' 
 
 let gameSreenWidth, gameSreenHeight;
 
@@ -21,7 +19,8 @@ function onDeviceReady() {
         scene: [BootGame, PlayGame],
     }
 
-    const game = new Phaser.Game(gameConfig);
+    // const game = new Phaser.Game(gameConfig);
+    new Phaser.Game(gameConfig);
     window.focus();
     // socket.emit('chat message','Index Connected.')
 

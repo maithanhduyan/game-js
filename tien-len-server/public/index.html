@@ -63,8 +63,11 @@
 </head>
 
 <body>
+    <ul>
+        <li><a href="/signup">Signup</a></li>
+        <li id="loginButton"><a href="/login">Login</a></li>
+    </ul>
     <ul id="messages"></ul>
-
     <!-- Form để nhập tên người chơi và tạo/join phòng -->
     <form id="joinForm">
         <label for="playerName">Tên người chơi:</label>
@@ -73,7 +76,8 @@
         <input type="text" id="roomName" value="Room-123" required><br />
         <button type="submit">Tạo phòng</button>
     </form>
-    <button id="leaveRoom" type="button">Rời phòng</button>
+    <button id="leaveRoom" type="button">Rời phòng</button>&nbsp;
+    <button id="chiaBai" type="button">Chia Bài</button>
     <!-- Hiển thị danh sách phòng -->
     <p>Danh sách phòng</p>
     <ul id="roomList"></ul>
@@ -87,11 +91,33 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+            // Kiểm tra xem có lưu trữ khóa TIEN_LEN_GAME_TOKEN trong localStorage hay không
+            if (localStorage.getItem("TIEN_LEN_GAME_TOKEN")) {
+                // Nếu có, ẩn nút đăng nhập
+                var loginButton = document.getElementById("loginButton"); // Thay "loginButton" bằng id thực tế của nút đăng nhập
+                if (loginButton) {
+                    loginButton.style.display = "none";
+                }
+            }
+        });
         const socket = io.connect('http://localhost:3000', {
-            auth: { token: localStorage.getItem('token') },
+            auth: { token: localStorage.getItem('TIEN_LEN_GAME_TOKEN') },
         });
         // Sử dụng sự kiện 'authentication' để gửi token lên máy chủ khi kết nối
-        socket.emit('authentication', localStorage.getItem('token'));
+        // socket.emit('authentication', localStorage.getItem('TIEN_LEN_GAME_TOKEN'));
+
+        // Nghe sự kiện 'authenticationResponse' từ máy chủ để kiểm tra xác thực
+        socket.on('authenticationResponse', (authenticated) => {
+            if (authenticated) {
+                // Xác thực thành công
+                console.log('Đã xác thực');
+            } else {
+                // Xác thực thất bại, yêu cầu đăng nhập lại
+                console.log('Vui lòng đăng nhập lại');
+            }
+        });
 
         const messages = document.getElementById('messages');
         const form = document.getElementById('form');
@@ -131,6 +157,22 @@
             socket.emit('leaveRoom', roomName);
             console.log('Đã Rời phòng');
         });
+
+        // Chia bài
+        $('#chiaBai').on('click', (e) => {
+            console.log('Chia bài');
+            const playerName = $('#playerName').val();
+            const roomName = $('#roomName').val();
+            socket.emit('deck-deal-card', roomName, playerName);
+        });
+        socket.on('deck-deal-card', (msg) => {
+            console.log('deck-deal-card Receive:' + msg);
+            const item = document.createElement('li');
+            item.textContent = msg;
+            messages.appendChild(item);
+            // console.log('Receive:' + msg);
+            window.scrollTo(0, document.body.scrollHeight);
+        })
 
         // Hiển thị danh sách phòng
         socket.on('roomList', (rooms) => {
