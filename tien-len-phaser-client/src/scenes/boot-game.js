@@ -19,7 +19,8 @@ class BootGame extends Phaser.Scene {
         // socket.emit('chat message','BootGame Connected.') 
         // this.game.socket.emit('chat message', 'input.value');
         // TODO: Tạo nút vào phòng chơi
-        this.scene.start('PlayGame');
+        // this.scene.start('PlayGame');
+        this.scene.start('BotPlayGame');
 
     }
 

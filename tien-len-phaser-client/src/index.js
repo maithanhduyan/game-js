@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { BootGame, PlayGame } from './scenes';
+import { BootGame, PlayGame ,BotPlayGame} from './scenes';
 
 let gameSreenWidth, gameSreenHeight;
 
@@ -16,7 +16,7 @@ function onDeviceReady() {
             width: gameSreenWidth,
             height: gameSreenHeight,
         },
-        scene: [BootGame, PlayGame],
+        scene: [BootGame, PlayGame,BotPlayGame],
     }
 
     // const game = new Phaser.Game(gameConfig);
