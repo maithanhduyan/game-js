@@ -5,12 +5,22 @@ class Referee {
         this.name = name;
         this.players = [];
         this.newRound = true;
-        this.checkspades3 = false;
+        this.checkspades3Flag = false;
+        this.init();
     }
+
+    init() {
+
+    }
+
     // Kiểm tra xem lá bài có thể được đánh hay không
-    static isValidPlay(cardToPlay, lastPlayedCard) {
+    static isValidPlay() {
         // Kiểm tra các luật chơi, ví dụ: cùng giá trị hoặc cùng loại bài
         // Trả về true nếu hợp lệ, false nếu không hợp lệ
+    }
+
+    isNewRound() {
+        return this.newRound;
     }
 
     addPlayer(player) {
@@ -22,35 +32,40 @@ class Referee {
     }
 
     checkPermission() {
-        // Kiểm tra có 3 Bích (spades3)
-        for (let i = 0; i < this.players.length; i++) {
-            console.log(this.players[i]);
-            for (let j = 0; j < this.players[i].handCards.length; j++) {
-                if (this.players[i].handCards[j].name === 'spades3') {
-                    this.checkspades3 = true; // đã kiểm tra spades3 ko kiểm nữa
-                    const player = i + 1;
-                    console.log(`bot ${player} có spades3.`);
-                    return player;
-                    // break;
-                }
-            }
+        // Nếu là bàn mới
+        if (this.isNewRound) {
+            // Kiểm tra ai có 3 bích đi trước
+            this.checkedSpades3();
+
+        } else {
+            // Bàn tiếp theo
+            // Lấy thông tin người thắng của bàn trước
+            console.log(`Ai Thắng đi trước`);
         }
     }
 
-    checkSpades3() {
+
+
+    checkedSpades3() {
         // Kiểm tra có 3 Bích (spades3)
-        for (let i = 0; i < this.players.length; i++) {
-            console.log(this.players[i]);
-            for (let j = 0; j < this.players[i].handCards.length; j++) {
-                if (this.players[i].handCards[j].name === 'spades3') {
-                    this.checkspades3 = true; // đã kiểm tra spades3 ko kiểm nữa
-                    const player = i + 1;
-                    console.log(`bot ${player} có spades3.`);
-                    return player;
-                    // break;
+        if (!this.checkspades3Flag) {
+            for (let i = 0; i < this.players.length; i++) {
+                // console.log(this.players[i]);
+                for (let j = 0; j < this.players[i].handCards.length; j++) {
+                    if (this.players[i].handCards[j].name === 'spades3') {
+                        this.checkspades3Flag = true; // nếu đã kiểm tra spades3 ko kiểm nữa
+
+                        // console.log(`${this.name}: ${this.players[i].name} có spades3.`);
+                        // trao quyền cho player có spades3
+                        this.players[i].setPermission(true);
+                        console.log(`${this.players[i].name}: đi trước`);
+                        this.newRound = false;
+                        break;
+                    }
                 }
             }
         }
+
     }
 
     checkRules() {

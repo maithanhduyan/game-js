@@ -11,25 +11,22 @@ class Dealer {
 
     // Trộn bộ bài
     shuffleDeck() {
-        
-    }
+         // Logic để xáo bài (bạn có thể tự xây dựng hoặc sử dụng một thư viện xáo bài)
+         const numCards = this.deck.cards.length;
 
-    // Thêm người chơi vào trò chơi
-    addPlayer(player) {
-        this.players.push(player);
-    }
-
-    // Phát bài cho tất cả người chơi
-    dealCards(numCards) {
-        for (let i = 0; i < numCards; i++) {
-            for (let player of this.players) {
-                player.addCard(this.deck.drawCard());
-            }
-        }
-    }
-
-    getDeck(){
-        return this.deck;
+         // Trường hợp đặc biệt: nếu chỉ có 1 lá bài hoặc không có lá bài nào, không cần trộn
+         if (numCards <= 1) {
+             return;
+         }
+ 
+         // Sử dụng thuật toán Fisher-Yates Shuffle
+         for (let i = numCards - 1; i > 0; i--) {
+             const j = Math.floor(Math.random() * (i + 1)); // Chọn một vị trí ngẫu nhiên từ i đến 0
+             // Hoán đổi lá bài ở vị trí i và j
+             const temp = this.deck.cards[i];
+             this.deck.cards[i] = this.deck.cards[j];
+             this.deck.cards[j] = temp;
+         }
     }
 }
 

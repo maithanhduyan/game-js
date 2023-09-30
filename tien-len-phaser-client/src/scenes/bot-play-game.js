@@ -14,26 +14,25 @@ class BotPlayGame extends Phaser.Scene {
         this.botPlayers = [];
         this.newRound = true;
 
-    }
-
-    preload() {
         this.bot1 = new BotPlayer(`BotPlayer1`);
         this.bot2 = new BotPlayer(`BotPlayer2`);
         this.bot3 = new BotPlayer(`BotPlayer3`);
         this.bot4 = new BotPlayer(`BotPlayer4`);
     }
 
-    create() {
-        // Dealer chia bài cho 4 BotPlayer từ 1 đến 4
-        // Đưa các bot vào một mảng để dễ dàng quản lý
-        this.botPlayers = [this.bot1, this.bot2, this.bot3, this.bot4];
+    preload() {
+        this.botPlayers.push(this.bot1)
+        this.botPlayers.push(this.bot2)
+        this.botPlayers.push(this.bot3)
+        this.botPlayers.push(this.bot4)
+    }
 
-        // Lấy bộ bài từ Dealer
-        const deck = this.dealer.getDeck();
-        // console.log(`${deck.cards.toString()}`);
+    create() {
+        const deck = new Deck();
+        console.log(deck.cards.toString());
         // Trộn bài
         deck.shuffle();
-        console.log(`${deck.cards.toString()}`);
+        // console.log(`${deck.cards}`);
 
         // Chia bài cho các bot
         for (let i = 0; i < 13; i++) {
@@ -44,10 +43,10 @@ class BotPlayGame extends Phaser.Scene {
         }
 
         // Bây giờ các bot đã có bài trong tay của mình để chơi
-        console.log(`Bot1: ${this.bot1.handCards.toString()}`);
-        console.log(`Bot2: ${this.bot2.handCards.toString()}`);
-        console.log(`Bot3: ${this.bot3.handCards.toString()}`);
-        console.log(`Bot4: ${this.bot4.handCards.toString()}`);
+        // console.log(`${this.bot1.name}: ${this.bot1.handCards.toString()}`);
+        // console.log(`${this.bot2.name}: ${this.bot2.handCards.toString()}`);
+        // console.log(`${this.bot3.name}: ${this.bot3.handCards.toString()}`);
+        // console.log(`${this.bot4.name}: ${this.bot4.handCards.toString()}`);
 
         // Trao quyền cho trọng tài
         this.referee.addPlayer(this.bot1);
@@ -55,8 +54,14 @@ class BotPlayGame extends Phaser.Scene {
         this.referee.addPlayer(this.bot3);
         this.referee.addPlayer(this.bot4);
 
-       console.log(this.referee.checkPermission()) ;
+        this.referee.checkPermission();
+        for (let i = 0; i < this.botPlayers.length; i++) {
+            this.botPlayers[i].run();
+        }
 
+
+    }
+    update() {
     }
 }
 
