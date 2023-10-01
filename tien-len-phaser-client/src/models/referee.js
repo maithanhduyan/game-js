@@ -69,29 +69,46 @@ class Referee {
     }
 
     checkRules() {
+        // Bộ bài gồm có
+        // Chất bài
+        // const suits = ['spades', 'clubs', 'diamonds', 'hearts'];
+        // Thứ tự
+        // const ranks = ['3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace', '2'];
+        // Thứ tự và chất từ nhỏ đến lớn
+        // const cardOrder = ['spades3', 'clubs3', 'diamonds3', 'hearts3', 'spades4', 'clubs4', 'diamonds4', 'hearts4', 'spades5', 'clubs5', 'diamonds5', 'hearts5', 'spades6', 'clubs6', 'diamonds6', 'hearts6', 'spades7', 'clubs7', 'diamonds7', 'hearts7', 'spades8', 'clubs8', 'diamonds8', 'hearts8', 'spades9', 'clubs9', 'diamonds9', 'hearts9', 'spades10', 'clubs10', 'diamonds10', 'hearts10', 'spadesJack', 'clubsJack', 'diamondsJack', 'heartsJack', 'spadesQueen', 'clubsQueen', 'diamondsQueen', 'heartsQueen', 'spadesKing', 'clubsKing', 'diamondsKing', 'heartsKing', 'spadesAce', 'clubsAce', 'diamondsAce', 'heartsAce', 'spades2', 'clubs2', 'diamonds2', 'hearts2'];
+
         //TODO Luật chơi
-        // Định nghĩa:
-        // Lẻ: 1 lá bài lớn nhỏ dựa vào rank
+        // Bắt đầu chơi
+        // Chia bài cho người chơi.
+        // Tối thiểu 2 người
+        // Tối đa 4 người
+        // Mỗi người 13 lá bài
+
+        // Định nghĩa các nước đi:
+        // Lẻ: 1 lá bài lớn nhỏ dựa vào rank 
         // Đôi: 2 lá có rank giống nhau so sánh dựa vào rank lớn nhất
         // Tam Cô: 3 lá có rank giống nhau so sánh dựa vào rank lớn nhất
         // Sảnh: các lá có thứ tự liền nhau từ 3 lá trở lên
-        // Tứ Quý: 4 lá giống nhau có thể chặt con 2
         // Ba Đôi thông: các đôi thứ tự liền nhau. Đôi 3, Đôi4, Đôi5
-        // Tứ Quý 2: Nếu có 4 con 2 thì tới trắng.
-        //
+        // Tứ Quý: 4 lá giống nhau. Tất cả tứ quý đều lớn hơn con 2.
+        // Tứ Quý 2: Có 4 lá rank là 2. Nếu có 4 con 2 thì tới trắng.
+        // Tới Trắng: Nếu có tứ quý 2 và 6 đôi thì tới trắng.
 
-        // Nếu là vòng mới
-        // 1. Kiểm tra ai có con 3Bích(spades3) thì trao quyền cho player đó đi trước
+        // GIAI ĐOẠN A: Nếu là vòng mới
+        // 1. Kiểm tra ai có con 3 Bích(spades3) thì trao quyền cho player đó đi trước
         // 2. Kiểm tra có tới trắng (6 Đôi, 4 con 2)
-        // 3. Kiểm tra người đi trước đánh 3Bích(spades3) có hay không?
-        // 3.1 Nếu có thì kiểm tra đánh 3Bích(spades3) Lẻ, Đôi, Tam Cô, Sảnh, Tứ Quý
-        // 4. Kiểm tra hết bài(Thắng) hay không? Nếu không qua bước 4
+        // 3. Kiểm tra người đi trước đánh 3 Bích(spades3) có hay không?
         // 4. Trao quyền cho người chơi tiếp.
 
-        // Nếu là vòng cũ
-        // 1. Người thắng sẽ đi trước
-        // 2. Kiểm tra có tới trắng (6 Đôi, 4 con 2)
-        // 
+        // GIAI ĐOẠN B: Nếu là vòng cũ
+        // 1. Kiểm tra có tới trắng (6 Đôi, 4 con 2)
+        // 2. Người thắng sẽ đi trước
+
+        // GIAI ĐOẠN C: Bắt đầu chơi theo nước
+        // 1. Người đi sau sẽ đi theo nước của người đi trước.
+        // 2. Người đi sau nếu không có nước đi cao hơn thì sẽ bỏ qua.
+        // 3. Nếu tất cả người chơi bỏ qua thì người đó sẽ đi tiếp.
+        // 4. Kiểm tra ai hết bài trước thì thắng.
     }
 }
 export default Referee;

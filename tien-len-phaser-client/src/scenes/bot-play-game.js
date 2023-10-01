@@ -3,7 +3,6 @@ import BotPlayer from "../models/bot";
 import Dealer from "../models/dealer";
 import Referee from "../models/referee";
 import Deck from "../models/deck";
-import Card from "../models/card";
 
 class BotPlayGame extends Phaser.Scene {
 
