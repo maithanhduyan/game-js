@@ -1,17 +1,16 @@
 import Card from './card'
-
+const suits = ['spades', 'clubs', 'diamonds', 'hearts'];
+const ranks = ['3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace', '2'];
 class Deck {
     constructor() {
         this.cards = [];
-        this.suits = ['spades', 'clubs', 'diamonds', 'hearts'];
-        this.values = ['3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace', '2'];
         this.initializeDeck();
     }
 
     initializeDeck() {
-        for (const suit of this.suits) {
-            for (const value of this.values) {
-                this.cards.push(new Card(suit, value));
+        for (const rank of ranks) {
+            for (const suit of suits) {
+                this.cards.push(new Card(suit, rank));
             }
         }
     }

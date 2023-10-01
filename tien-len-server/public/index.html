@@ -66,6 +66,7 @@
     <ul>
         <li><a href="/signup">Signup</a></li>
         <li id="loginButton"><a href="/login">Login</a></li>
+        <li id="logoutButton"><a href="#">Logout</a></li>
     </ul>
     <ul id="messages"></ul>
     <!-- Form để nhập tên người chơi và tạo/join phòng -->
@@ -94,13 +95,13 @@
 
         document.addEventListener("DOMContentLoaded", function () {
             // Kiểm tra xem có lưu trữ khóa TIEN_LEN_GAME_TOKEN trong localStorage hay không
-            if (localStorage.getItem("TIEN_LEN_GAME_TOKEN")) {
-                // Nếu có, ẩn nút đăng nhập
-                var loginButton = document.getElementById("loginButton"); // Thay "loginButton" bằng id thực tế của nút đăng nhập
-                if (loginButton) {
-                    loginButton.style.display = "none";
-                }
-            }
+            // if (localStorage.getItem("TIEN_LEN_GAME_TOKEN")) {
+            //     // Nếu có, ẩn nút đăng nhập
+            //     var loginButton = document.getElementById("loginButton"); // Thay "loginButton" bằng id thực tế của nút đăng nhập
+            //     if (loginButton) {
+            //         loginButton.innerHTML="<a href='#'>Logout</a>";
+            //     }
+            // }
         });
         const socket = io.connect('http://localhost:3000', {
             auth: { token: localStorage.getItem('TIEN_LEN_GAME_TOKEN') },
@@ -201,6 +202,24 @@
             players.forEach((player) => {
                 playerList.append(`<li>${player.name}</li>`);
             });
+        });
+
+        $('#logoutButton').on('click', () => {
+            console.log('logout');
+            fetch("/api/logout", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": localStorage.getItem('TIEN_LEN_GAME_TOKEN') // Gửi token trong headers Authorization
+                },
+                body: JSON.stringify({})
+            }).then(response => response.json())
+                .then(data => {
+                    console.log(`Data: ${data.message}`);
+                })
+                .catch(error => {
+                    console.error("Error", error);
+                })
         });
 
     </script>

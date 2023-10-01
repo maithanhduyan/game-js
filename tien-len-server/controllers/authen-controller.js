@@ -54,6 +54,7 @@ module.exports = {
                     console.log(`Mật khẩu khớp`);
                     // Tạo token JWT và gửi về cho máy khách
                     const token = jwt.sign({ username }, secretKey, { expiresIn: '1h' });
+                    res.setHeader('Authorization', `Bearer ${token}` );
                     const tokenName = 'TIEN_LEN_GAME_TOKEN';
                     res.json({ username: user.username, tokenName: tokenName, token: token });
                 });
@@ -77,6 +78,13 @@ module.exports = {
             }
         });
 
+    },
+
+    logout: function (req, res) {
+        jwt.sign({  }, secretKey, { expiresIn: '0h' });
+        // Đặt thời gian sống của token thành 0 để hủy nó
+        res.setHeader('Authorization', '');
+        res.json({ message: 'Logged out successfully' });
     }
 
 }

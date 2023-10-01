@@ -113,17 +113,25 @@ class PlayGame extends Phaser.Scene {
         playButton.setInteractive();
         playButton.on('pointerdown', () => {
             console.log('ĐÁNH BÀI')
+            let destroyList = [];
             let initialX = (screenWidth - (selectedCards.length * (cardWidth - cardSpacing) + cardSpacing)) / 2;
             for (let i = 0; i < selectedCards.length; i++) {
                 console.log('Đánh' + selectedCards[i].frame.name)
-                selectedCards[i].clearTint(); 
+                selectedCards[i].clearTint();
                 // Đặt kích thước cho lá bài nhỏ lại
                 selectedCards[i].setScale(cardWidth / selectedCards[i].width * 0.7, cardHeight / selectedCards[i].height * 0.7);
                 selectedCards[i].y = screenHeight / 2; // Đặt lá bài vào giữa màn hình theo trục dọc
                 // Đặt lá bài vào giữa màn hình theo trục 
-                selectedCards[i].x =  initialX + i * (cardWidth - (cardSpacing));
-                this.children.bringToTop(selectedCards[i])
+                selectedCards[i].x = initialX + i * (cardWidth - (cardSpacing));
+                this.children.bringToTop(selectedCards[i]);
+                destroyList.push(selectedCards[i]);
+                // selectedCards[i].destroy();
             }
+
+            destroyList.forEach(card => {
+                console.log(`Need Destroy: ${card.frame.name}`);
+            })
+
             handCards.forEach(card => {
                 console.log(card.frame.name)
             });

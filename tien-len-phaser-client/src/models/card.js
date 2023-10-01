@@ -1,3 +1,4 @@
+
 class Card {
     constructor(suit, rank) {
         this.suit = suit;
@@ -6,8 +7,6 @@ class Card {
     }
 
     toString() {
-        // `${this.value} of ${this.suit}`
-        this.name = `${this.suit}${this.rank}`;
         return this.name;
     }
 }
