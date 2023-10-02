@@ -1,0 +1,23 @@
+{
+    "root": true,
+    "env": {
+        "browser": true,
+        "node": true,
+        "es2018": true
+    },
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+        "@typescript-eslint"
+    ],
+    "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended"
+    ],
+    "rules": {
+        // Các quy tắc riêng cho TypeScript có thể được thêm ở đây
+        "semi": [
+            "error",
+            "always"
+        ] //  sử dụng dấu chấm phẩy cuối cùng (;) trong TypeScript
+    }
+}
