@@ -22,7 +22,7 @@ public class Main {
 				executorService.submit(new ClientHandler(clientSocket , game));
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			AsynLogger.logInfo("Lỗi:"+e.getMessage());
 		}
 	}
 
