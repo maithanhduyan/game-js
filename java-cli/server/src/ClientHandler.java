@@ -6,7 +6,7 @@ import java.util.concurrent.*;
 public class ClientHandler implements Runnable {
 	private Socket clientSocket;
 	private Game game;
-	private static final long TIMEOUT = 5 * 60 * 1000; // Thời hạn 5 phút
+	private static final long TIMEOUT = 1 * 60 * 1000; // Thời hạn 5 phút
 
 	private static ScheduledExecutorService timeoutExecutor = Executors.newScheduledThreadPool(10);
 
@@ -22,13 +22,13 @@ public class ClientHandler implements Runnable {
 			PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
 
 			// Gửi yêu cầu đến client
-			out.println("Server: Hello, client! Please respond within 5 minutes.");
+			out.println("TOKEN:1234567");
 
 			// Đặt thời hạn cho việc đợi phản hồi từ client
 			ScheduledFuture<?> timeoutTask = timeoutExecutor.schedule(() -> {
 				try {
 					clientSocket.close();
-					System.out.println(
+					AsynLogger.logInfo(
 							"Connection with client " + clientSocket.getInetAddress().getHostAddress() + " timed out.");
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -40,14 +40,16 @@ public class ClientHandler implements Runnable {
 			// Hủy bỏ task timeout nếu client đã phản hồi kịp thời
 			timeoutTask.cancel(false);
 
-			System.out.println(
+			AsynLogger.logInfo(
 					"Received from client " + clientSocket.getInetAddress().getHostAddress() + ": " + response);
 
 			// Xử lý dữ liệu từ client ở đây
-			
+			out.println("Cards:1343" + Deck.CARDS_ORDER);
 			// JSON 
 			// Nhận token và xác thực từ client 
-			
+			// Đọc phản hồi từ client
+			response = in.readLine();
+			AsynLogger.logInfo(""+response);
 
 			// Đóng kết nối
 			in.close();
