@@ -12,6 +12,7 @@ public class Card {
 		super();
 		this.suit = suit;
 		this.rank = rank;
+		this.name = this.suit + this.rank;
 	}
 
 	public String getSuit() {
