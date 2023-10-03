@@ -12,14 +12,14 @@ public class Main {
 	public static void main(String[] args) {
 		try {
 			ServerSocket serverSocket = new ServerSocket(PORT);
-			System.out.println("Server listening on port " + PORT);
-
+			AsynLogger.logInfo("Server listening on port " + PORT);
+			Game game = new Game();
 			while (true) {
 				Socket clientSocket = serverSocket.accept();
 				System.out.println("Client connected: " + clientSocket.getInetAddress().getHostAddress());
 
 				// Tạo một luồng mới cho kết nối từ client và đặt thời hạn đợi phản hồi
-				executorService.submit(new ClientHandler(clientSocket));
+				executorService.submit(new ClientHandler(clientSocket , game));
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

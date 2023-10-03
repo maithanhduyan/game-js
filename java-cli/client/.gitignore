@@ -3,6 +3,7 @@
 
 # Log files
 *.log
+*.clk
 
 # BlueJ files
 *.ctxt
@@ -51,3 +52,4 @@ nbbuild/
 dist/
 nbdist/
 .nb-gradle/
+/bin/
