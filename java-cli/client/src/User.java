@@ -1,4 +1,3 @@
-import org.json.JSONObject;
 
 public class User {
 	private String username;
@@ -29,13 +28,6 @@ public class User {
 	@Override
 	public String toString() {
 		return "User [username=" + username + ", password=" + password + "]";
-	}
-
-	public String toJson() {
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("username", username);
-		jsonObject.put("password", password);
-		return jsonObject.toString();
 	}
 
 }
