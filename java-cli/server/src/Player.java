@@ -1,21 +1,21 @@
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 public class Player implements Runnable {
 
 	private List<Card> handCards;
 	private String name;
-
-	public Player() {
-		super();
-		this.handCards = new ArrayList<Card>();
-	}
+	private CountDownLatch turnLatch;
 
 	public Player(String name) {
 		super();
 		this.name = name;
 		this.handCards = new ArrayList<Card>();
+	}
+
+	public void setCountDownLatch(CountDownLatch turnLatch) {
+		this.turnLatch = turnLatch;
 	}
 
 	public String getName() {
@@ -55,8 +55,14 @@ public class Player implements Runnable {
 
 	@Override
 	public void run() {
-		// Logic xử lý khi người chơi suy nghĩ
-		// Ví dụ: Người chơi đơn giản chỉ in tên và số lượng lá bài trong tay
+		// Chờ đến khi đến lượt chơi của người chơi
+		try {
+			turnLatch.await(); // Chờ đến khi latch được giảm về 0
+		} catch (InterruptedException e) {
+			System.out.println("Lỗi: " + e.getMessage());
+		}
+
+		// Đến lượt chơi của người chơi, thực hiện các hành động liên quan
 		System.out.println(name + "'s Number of Cards in Hand: " + handCards.size());
 		// Thêm logic xử lý khác tại đây
 
@@ -66,7 +72,5 @@ public class Player implements Runnable {
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
-	
 
 }
