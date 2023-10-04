@@ -2,6 +2,7 @@ import java.io.*;
 import java.net.*;
 import java.util.Scanner;
 
+import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,13 +41,20 @@ public class Client {
 				public void run() {
 					LOG.info("Tạo luồng gửi data.");
 					while (isConnecting) {
-
-						// read the message to deliver.
-						String msg = scn.nextLine();
-
 						try {
-							// write on the output stream
-							dos.writeUTF(msg);
+							// read the message to deliver.
+							int option = scn.nextInt();
+							switch (option) {
+							case 1:
+								JSONObject jsonObject = new JSONObject();
+								jsonObject.put("name", "John");
+								jsonObject.put("age", 30);
+								jsonObject.put("isEmployee", true);
+								// write on the output stream
+								dos.writeUTF(jsonObject.toString());
+								break;
+							}
+
 						} catch (IOException e) {
 							LOG.error("Lỗi Gửi Data: " + e.getMessage());
 							isConnecting = false;

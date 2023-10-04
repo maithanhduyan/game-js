@@ -7,6 +7,9 @@ import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,9 +30,10 @@ public class ClientHandler implements Runnable {
 	Socket socket;
 	boolean isloggedin;
 
-	private Player player ;
-	
-	
+	private Player player;
+
+	JSONParser parser = new JSONParser();
+
 	public ClientHandler(Socket socket, String name, DataInputStream dataInputStream,
 			DataOutputStream dataOutputStream) {
 		this.socket = socket;
@@ -48,12 +52,19 @@ public class ClientHandler implements Runnable {
 				// Server nhận dữ liệu từ client và xử lý
 				received = dataInputStream.readUTF();
 				LOG.info("Ray id:[" + this.name + "]" + "Server received: " + received);
-				if (received.equals("LOGIN")) {
-	                String username = dataInputStream.readUTF();
-	                LOG.info(username);
-	                dataOutputStream.writeUTF("Login successful"); // Hoặc thông báo lỗi nếu đăng nhập không thành công
-	            }
-				
+				try {
+					JSONObject recv = (JSONObject) parser.parse(received);
+					if (recv.containsKey("name")) {
+						LOG.info("Nhận name");
+						dataOutputStream.writeUTF(recv.get("name") + "Sucessful");
+					}
+					if (recv.containsKey("age")) {
+						LOG.info("Nhận age");
+						dataOutputStream.writeUTF(recv.get("age").toString());
+					}
+				} catch (ParseException e) {
+					LOG.info("Lỗi: " + e.getMessage());
+				}
 
 			} catch (IOException e) {
 				LOG.error("Lỗi: " + e.getMessage());
