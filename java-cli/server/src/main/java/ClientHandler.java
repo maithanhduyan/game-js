@@ -1,9 +1,9 @@
 
-import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ClientHandler implements Runnable {
-	
+
 	private static final Logger LOG = LoggerFactory.getLogger(ClientHandler.class);
 
 	private Socket clientSocket;
@@ -20,53 +20,56 @@ public class ClientHandler implements Runnable {
 
 	private static final ExecutorService sendExecutor = Executors.newSingleThreadExecutor();
 	private static final ExecutorService receiveExecutor = Executors.newSingleThreadExecutor();
+	Scanner scn = new Scanner(System.in);
+	private String name;
+	final DataInputStream dataInputStream;
+	final DataOutputStream dataOutputStream;
+	Socket socket;
+	boolean isloggedin;
 
-	public ClientHandler(Socket clientSocket) {
-		this.clientSocket = clientSocket;
+	private Player player ;
+	
+	
+	public ClientHandler(Socket socket, String name, DataInputStream dataInputStream,
+			DataOutputStream dataOutputStream) {
+		this.socket = socket;
+		this.dataInputStream = dataInputStream;
+		this.dataOutputStream = dataOutputStream;
+		this.isloggedin = true;
+		this.name = name;
+		this.player = new Player(name);
 	}
 
 	@Override
 	public void run() {
-		try {
-			BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-			PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+		String received = null;
+		while (this.isloggedin) {
+			try {
+				// Server nhận dữ liệu từ client và xử lý
+				received = dataInputStream.readUTF();
+				LOG.info("Ray id:[" + this.name + "]" + "Server received: " + received);
+				if (received.equals("LOGIN")) {
+	                String username = dataInputStream.readUTF();
+	                LOG.info(username);
+	                dataOutputStream.writeUTF("Login successful"); // Hoặc thông báo lỗi nếu đăng nhập không thành công
+	            }
+				
 
-			// Gửi yêu cầu đến client trong một luồng riêng
-			LOG.info("Gửi yêu cầu đến client trong một luồng riêng");
-			sendExecutor.submit(() -> {
-				out.println("TOKEN:1234567");
-			});
-
-			// Nhận phản hồi từ client trong một luồng riêng
-			LOG.info("Nhận phản hồi từ client trong một luồng riêng");
-			receiveExecutor.submit(() -> {
-				try {
-					String response = in.readLine();
-					LOG.error("Received from client: " + response);
-				} catch (IOException e) {
-					LOG.error("Lỗi khi nhận dữ liệu từ client: " + e.getMessage());
-				}
-			});
-
-			// Đợi cả hai luồng hoàn thành
-			sendExecutor.shutdown();
-			receiveExecutor.shutdown();
-			while (!(sendExecutor.isTerminated() && receiveExecutor.isTerminated())) {
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					System.err.println("Lỗi: " + e.getMessage());
-				} // Chờ 0.1 giây
+			} catch (IOException e) {
+				LOG.error("Lỗi: " + e.getMessage());
+				Main.activeClientList.remove(this.name);
+				break;
 			}
-
-			// Đóng kết nối
-			System.out.println("Đóng kết nối");
-			in.close();
-			out.close();
-			clientSocket.close();
-		} catch (IOException e) {
-			System.err.println("Lỗi:" + e.getMessage());
 		}
+
+		// closing resources
+		try {
+			this.dataInputStream.close();
+			this.dataOutputStream.close();
+		} catch (IOException e) {
+			LOG.error("Lỗi: " + e.getMessage());
+		}
+
 	}
+
 }
