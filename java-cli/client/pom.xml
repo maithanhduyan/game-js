@@ -8,6 +8,11 @@
 	<name>Client on Maven Project</name>
 	<description>Client on Maven Project</description>
 
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	</properties>
+
 	<dependencies>
 		<!-- SLF4J API -->
 		<dependency>
@@ -23,4 +28,35 @@
 			<version>2.0.9</version>
 		</dependency>
 	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.1</version> <!-- Phiên bản của Maven Compiler Plugin -->
+				<configuration>
+					<source>20</source> <!-- Chỉ định phiên bản nguồn của Java -->
+					<target>20</target> <!-- Chỉ định phiên bản đích của Java -->
+				</configuration>
+			</plugin>
+
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.3.0</version> <!-- Sử dụng phiên bản mới nhất của
+				Maven JAR Plugin -->
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>Client</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+			
+		</plugins>
+	</build>
+
 </project>
