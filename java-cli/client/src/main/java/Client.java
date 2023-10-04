@@ -30,7 +30,7 @@ public class Client {
 			boolean serverAccepted = false;
 			
 			// Đóng kết nối
-			System.out.println("Đóng kết nối");
+			LOG.info("Đóng kết nối");
 			in.close();
 			out.close();
 			socket.close();
