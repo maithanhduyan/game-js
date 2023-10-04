@@ -1,12 +1,19 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>com.game</groupId>
-  <artifactId>Server</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <name>Server Maven Project</name>
-  <description>Server Maven Project</description>
-  
-  <dependencies>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.game</groupId>
+	<artifactId>Server</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>Server Maven Project</name>
+	<description>Server Maven Project</description>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	</properties>
+
+	<dependencies>
 		<!-- SLF4J API -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -21,4 +28,39 @@
 			<version>2.0.9</version>
 		</dependency>
 	</dependencies>
+
+	<build>
+		
+		<finalName>Sever</finalName>
+		
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.1</version> <!-- Phiên bản của Maven Compiler Plugin -->
+				<configuration>
+					<source>21</source> <!-- Chỉ định phiên bản nguồn của Java -->
+					<target>21</target> <!-- Chỉ định phiên bản đích của Java -->
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.1.1</version> <!-- Sử dụng phiên bản mới nhất của
+				Maven JAR Plugin -->
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<classpathPrefix>lib/</classpathPrefix>
+							<mainClass>Main</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
+
 </project>
