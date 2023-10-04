@@ -1,18 +1,23 @@
 
-import java.io.*;
-import java.net.*;
-import java.util.concurrent.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ClientHandler implements Runnable {
+
 	private Socket clientSocket;
-	private Game game;
+
 	private static final long TIMEOUT = 1 * 60 * 1000; // Thời hạn 5 phút
 
-	private static ScheduledExecutorService timeoutExecutor = Executors.newScheduledThreadPool(10);
+	private static final ExecutorService sendExecutor = Executors.newSingleThreadExecutor();
+	private static final ExecutorService receiveExecutor = Executors.newSingleThreadExecutor();
 
-	public ClientHandler(Socket clientSocket, Game game) {
+	public ClientHandler(Socket clientSocket) {
 		this.clientSocket = clientSocket;
-		this.game = game;
 	}
 
 	@Override
@@ -21,42 +26,40 @@ public class ClientHandler implements Runnable {
 			BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 			PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
 
-			// Gửi yêu cầu đến client
-			out.println("TOKEN:1234567");
+			// Gửi yêu cầu đến client trong một luồng riêng
+			sendExecutor.submit(() -> {
+				out.println("TOKEN:1234567");
+			});
 
-			// Đặt thời hạn cho việc đợi phản hồi từ client
-			ScheduledFuture<?> timeoutTask = timeoutExecutor.schedule(() -> {
+			// Nhận phản hồi từ client trong một luồng riêng
+			receiveExecutor.submit(() -> {
 				try {
-					clientSocket.close();
-					AsynLogger.logInfo(
-							"Connection with client " + clientSocket.getInetAddress().getHostAddress() + " timed out.");
+					String response = in.readLine();
+					System.out.println("Received from client: " + response);
 				} catch (IOException e) {
-					e.printStackTrace();
+					System.err.println("Lỗi khi nhận dữ liệu từ client: " + e.getMessage());
 				}
-			}, TIMEOUT, TimeUnit.MILLISECONDS);
+			});
 
-			// Đọc phản hồi từ client
-			String response = in.readLine();
-			// Hủy bỏ task timeout nếu client đã phản hồi kịp thời
-			timeoutTask.cancel(false);
-
-			AsynLogger.logInfo(
-					"Received from client " + clientSocket.getInetAddress().getHostAddress() + ": " + response);
-
-			// Xử lý dữ liệu từ client ở đây
-			out.println("Cards:1343" + Deck.CARDS_ORDER);
-			// JSON 
-			// Nhận token và xác thực từ client 
-			// Đọc phản hồi từ client
-			response = in.readLine();
-			AsynLogger.logInfo(""+response);
+			// Đợi cả hai luồng hoàn thành
+			sendExecutor.shutdown();
+			receiveExecutor.shutdown();
+			while (!(sendExecutor.isTerminated() && receiveExecutor.isTerminated())) {
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					System.err.println("Lỗi: " + e.getMessage());
+				} // Chờ 0.1 giây
+			}
 
 			// Đóng kết nối
+			System.out.println("Đóng kết nối");
 			in.close();
 			out.close();
 			clientSocket.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.err.println("Lỗi:" + e.getMessage());
 		}
 	}
 }

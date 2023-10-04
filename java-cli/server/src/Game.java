@@ -2,7 +2,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
-
+import java.util.concurrent.CountDownLatch;
 public class Game {
 
 	HashMap<String, Player> playerInRoom;
@@ -12,6 +12,8 @@ public class Game {
 	boolean newRound = true;
 
 	private ExecutorService executorService;
+	
+	private CountDownLatch turnLatch;
 
 	// Tạo một đối tượng GameRules
 	private GameRules gameRules;
@@ -37,6 +39,8 @@ public class Game {
 		Player playerB = new Player("B");
 		Player playerC = new Player("C");
 		Player playerD = new Player("D");
+		
+		// Cho player vào phòng
 		addPlayerInRoom(playerA, room);
 		addPlayerInRoom(playerB, room);
 		addPlayerInRoom(playerC, room);
@@ -46,15 +50,19 @@ public class Game {
 
 		// Tạo bộ bài
 		Deck deck = Deck.getInstance();
+		
+		// Trộn bài
 		deck.shufle();
+		
+		// Lấy bài
+		List<Card> cards = deck.getCards();
 
 		// Xuất các lá bài ra màn hình
 //		AsynLogger.logInfo("Deck was created.");
-		List<Card> cards = deck.getCards();
-		for (Card card : cards) {
-			System.out.print(card.getSuit() + "" + card.getRank());
-		}
-		System.out.println();
+//		for (Card card : cards) {
+//			System.out.print(card.getSuit() + "" + card.getRank());
+//		}
+//		System.out.println();
 
 		// Chia bài cho 4 người chơi
 		int cardIndex = 0;
