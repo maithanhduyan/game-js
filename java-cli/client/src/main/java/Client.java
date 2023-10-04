@@ -2,7 +2,13 @@ import java.io.*;
 import java.net.*;
 import java.util.Scanner;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Client {
+	
+	private static final Logger LOG = LoggerFactory.getLogger(Client.class);
+	
 	public static void main(String[] args) {
 		String serverAddress = "10.220.56.18"; // Địa chỉ IP hoặc tên máy chủ của server
 		int port = 3000; // Số cổng của server
@@ -10,7 +16,7 @@ public class Client {
 		String token = null;
 		try {
 			Socket socket = new Socket(serverAddress, port);
-			AsynLogger.logInfo("Connected to server: " + socket.getInetAddress().getHostAddress());
+			LOG.info("Connected to server: " + socket.getInetAddress().getHostAddress());
 
 			BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
@@ -20,7 +26,7 @@ public class Client {
 
 			// Đọc phản hồi từ server
 			String response = in.readLine();
-			AsynLogger.logInfo("Server response: " + response);
+			LOG.info("Server response: " + response);
 			boolean serverAccepted = false;
 			
 			// Đóng kết nối
@@ -29,7 +35,7 @@ public class Client {
 			out.close();
 			socket.close();
 		} catch (IOException e) {
-			AsynLogger.logInfo("Lỗi:" + e.getMessage());
+			LOG.error("Lỗi:" + e.getMessage());
 		}
 	}
 }
