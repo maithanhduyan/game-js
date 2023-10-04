@@ -64,13 +64,6 @@ public class Game {
 		// Lấy bài
 		List<Card> cards = deck.getCards();
 
-		// Xuất các lá bài ra màn hình
-//		AsynLogger.logInfo("Deck was created.");
-//		for (Card card : cards) {
-//			System.out.print(card.getSuit() + "" + card.getRank());
-//		}
-//		System.out.println();
-
 		// Chia bài cho 4 người chơi
 		int cardIndex = 0;
 		while (cardIndex < cards.size()) {
