@@ -1,6 +1,12 @@
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class GameRules {
+	
+	private static final Logger LOG = LoggerFactory.getLogger(GameRules.class);
+	
 	public static boolean isValidMove(Player player, List<Card> currentPlayerCards, List<Card> lastPlayedCards) {
 		// Kiểm tra xem bài đánh ra có hợp lệ không
 		// Đây là nơi để đặt các luật chơi của game
@@ -27,12 +33,13 @@ public class GameRules {
 		case 1: {
 			// Nếu là 1 lá là nước đi Lẻ
 			// Người chơi sau phải đi rank lớn hơn
-			System.out.println("" + lastPlayedCards.getFirst().getRank());
+			System.out.println("" + lastPlayedCards.getFirst().getName());
 			break;
 		}
 		default:
 			throw new IllegalArgumentException("Unexpected value: " + numOfLastPlayedCard);
 		}
+		
 
 		// Nếu tất cả các lá bài đánh ra đều thỏa mãn quy tắc, bài đánh ra hợp lệ
 		return true;

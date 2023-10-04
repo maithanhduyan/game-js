@@ -7,7 +7,12 @@ import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ClientHandler implements Runnable {
+	
+	private static final Logger LOG = LoggerFactory.getLogger(ClientHandler.class);
 
 	private Socket clientSocket;
 
@@ -27,17 +32,19 @@ public class ClientHandler implements Runnable {
 			PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
 
 			// Gửi yêu cầu đến client trong một luồng riêng
+			LOG.info("Gửi yêu cầu đến client trong một luồng riêng");
 			sendExecutor.submit(() -> {
 				out.println("TOKEN:1234567");
 			});
 
 			// Nhận phản hồi từ client trong một luồng riêng
+			LOG.info("Nhận phản hồi từ client trong một luồng riêng");
 			receiveExecutor.submit(() -> {
 				try {
 					String response = in.readLine();
-					System.out.println("Received from client: " + response);
+					LOG.error("Received from client: " + response);
 				} catch (IOException e) {
-					System.err.println("Lỗi khi nhận dữ liệu từ client: " + e.getMessage());
+					LOG.error("Lỗi khi nhận dữ liệu từ client: " + e.getMessage());
 				}
 			});
 

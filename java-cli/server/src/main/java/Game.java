@@ -2,8 +2,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.concurrent.CountDownLatch;
+
 public class Game {
+
+	private static final Logger LOG = LoggerFactory.getLogger(Main.class);
 
 	HashMap<String, Player> playerInRoom;
 
@@ -12,7 +19,7 @@ public class Game {
 	boolean newRound = true;
 
 	private ExecutorService executorService;
-	
+
 	private CountDownLatch turnLatch;
 
 	// Tạo một đối tượng GameRules
@@ -20,7 +27,7 @@ public class Game {
 
 	public Game() {
 		super();
-		AsynLogger.logInfo("Create new game.");
+		LOG.info("Create new game.");
 		this.rooms = new HashMap<String, Room>();
 		initGame();
 	}
@@ -32,28 +39,28 @@ public class Game {
 		String roomId = "AAA";
 		Room room = new Room(roomId);
 		this.rooms.put(roomId, room);
-		AsynLogger.logInfo("Create sample room with id:" + room.id);
+		LOG.info("Create sample room with id:" + room.id);
 
 		// Tạo ra 4 player
 		Player playerA = new Player("A");
 		Player playerB = new Player("B");
 		Player playerC = new Player("C");
 		Player playerD = new Player("D");
-		
+
 		// Cho player vào phòng
 		addPlayerInRoom(playerA, room);
 		addPlayerInRoom(playerB, room);
 		addPlayerInRoom(playerC, room);
 		addPlayerInRoom(playerD, room);
-		AsynLogger.logInfo("Create 4 players " + playerA.getName() + ", " + playerB.getName() + ", " + playerC.getName()
-				+ ", " + playerD.getName());
+		LOG.info("Create 4 players " + playerA.getName() + ", " + playerB.getName() + ", " + playerC.getName() + ", "
+				+ playerD.getName());
 
 		// Tạo bộ bài
 		Deck deck = Deck.getInstance();
-		
+
 		// Trộn bài
 		deck.shufle();
-		
+
 		// Lấy bài
 		List<Card> cards = deck.getCards();
 
@@ -170,32 +177,32 @@ public class Game {
 //	}
 
 	public void startThinkingTime(Player player) {
-	    int maxThinkingTime = 20000; // 20 giây
-	    CountDownLatch latch = new CountDownLatch(1);
+		int maxThinkingTime = 20000; // 20 giây
+		CountDownLatch latch = new CountDownLatch(1);
 
-	    executorService.submit(() -> {
-	        try {
-	            long startTime = System.currentTimeMillis();
-	            while (System.currentTimeMillis() - startTime < maxThinkingTime) {
-	                // Kiểm tra nếu người chơi đã đánh bài xong
-	                if (player.hasPlayed()) {
-	                    latch.countDown(); // Giảm đếm để kết thúc luồng
-	                    return;
-	                }
-	                // Đợi 1 giây trước khi kiểm tra lại
-	                Thread.sleep(1000);
-	            }
-	            // Thời gian suy nghĩ đã hết, thực hiện các hành động liên quan
-	            // ...
-	        } catch (InterruptedException e) {
-	            e.printStackTrace();
-	        }
-	    });
+		executorService.submit(() -> {
+			try {
+				long startTime = System.currentTimeMillis();
+				while (System.currentTimeMillis() - startTime < maxThinkingTime) {
+					// Kiểm tra nếu người chơi đã đánh bài xong
+					if (player.hasPlayed()) {
+						latch.countDown(); // Giảm đếm để kết thúc luồng
+						return;
+					}
+					// Đợi 1 giây trước khi kiểm tra lại
+					Thread.sleep(1000);
+				}
+				// Thời gian suy nghĩ đã hết, thực hiện các hành động liên quan
+				// ...
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		});
 
-	    try {
-	        latch.await(); // Chờ đến khi người chơi đánh bài xong hoặc hết thời gian suy nghĩ
-	    } catch (InterruptedException e) {
-	        e.printStackTrace();
-	    }
+		try {
+			latch.await(); // Chờ đến khi người chơi đánh bài xong hoặc hết thời gian suy nghĩ
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 }
