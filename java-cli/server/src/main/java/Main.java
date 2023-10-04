@@ -3,17 +3,22 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class Main {
 	private static final int PORT = 3000;
 
 	private static ExecutorService executorService = Executors.newCachedThreadPool();
-
+	
+	private static final Logger LOG = LoggerFactory.getLogger(Main.class);
+	
 	public static void main(String[] args) {
 		ServerSocket serverSocket;
 		try {
 			serverSocket = new ServerSocket(PORT);
-			AsynLogger.logInfo("Server listening on port " + PORT);
+			LOG.info("Server listening on port " + PORT);
 			
 			while (true) {
 				Socket clientSocket = serverSocket.accept();
@@ -23,7 +28,7 @@ public class Main {
 				executorService.submit(new ClientHandler(clientSocket));
 			}
 		} catch (IOException e) {
-			AsynLogger.logInfo("Lỗi:" + e.getMessage());
+			LOG.info("Lỗi:" + e.getMessage());
 
 		}
 	}
