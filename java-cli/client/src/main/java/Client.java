@@ -1,3 +1,7 @@
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -7,12 +11,24 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Client {
+
+	private JFrame frame;
+	private JTextField usernameField;
+	private JPasswordField passwordField;
 
 	private static final Logger LOG = LoggerFactory.getLogger(Client.class);
 
@@ -27,12 +43,19 @@ public class Client {
 	private static JSONObject RESPONSE = new JSONObject();
 
 	private static Map<String, String> sendData;
+
 	private static Map<String, String> receiveData;
 
-	public static void main(String[] args) {
+	// Địa chỉ IP hoặc tên máy chủ của server
+	private static String serverAddress = "10.220.56.18";
 
-		// Địa chỉ IP hoặc tên máy chủ của server
-		String serverAddress = "10.220.56.18";
+	private ClientUI clientUI;
+
+	public Client() {
+		clientUI = new ClientUI(this);
+	}
+
+	void initiallize() {
 
 		User player1 = new User();
 
@@ -108,7 +131,8 @@ public class Client {
 								dos.writeUTF(JSONObject.toJSONString(sendData));
 								break;
 							case 6:
-								sendData = GetGamePlay(REQUEST.get("Token").toString(),REQUEST.get("RoomId").toString()); 
+								sendData = GetGamePlay(REQUEST.get("Token").toString(),
+										REQUEST.get("RoomId").toString());
 								// write on the output stream
 								dos.writeUTF(JSONObject.toJSONString(sendData));
 								break;
@@ -155,7 +179,7 @@ public class Client {
 									// Get Game Status
 									if (recv.containsKey("GameStatus")) {
 										REQUEST.put("GameStatus", recv.get("GameStatus").toString());
-										
+
 									}
 								}
 							}
@@ -176,6 +200,38 @@ public class Client {
 		} catch (IOException e) {
 			LOG.error("Lỗi: " + e.getMessage());
 		}
+	}
+
+	public void handleLogin(String username, char[] password) {
+		// Xử lý đăng nhập ở đây
+		// Kiểm tra thông tin đăng nhập
+		// Nếu hợp lệ, thực hiện các hành động tiếp theo
+		// Nếu không hợp lệ, hiển thị thông báo lỗi
+		boolean isValid = validateLogin(username, password);
+		if (isValid) {
+			clientUI.showMessage("Login successful!");
+			// Thực hiện các hành động sau khi đăng nhập thành công
+			clientUI.showMainScreen();
+		} else {
+			clientUI.showMessage("Invalid username or password. Please try again.");
+			// Xử lý trường hợp đăng nhập không hợp lệ
+		}
+	}
+
+	private boolean validateLogin(String username, char[] password) {
+		// Xử lý logic kiểm tra thông tin đăng nhập ở đây
+		// Trả về true nếu thông tin hợp lệ, ngược lại trả về false
+		return true; // Giả sử luôn trả về true để minh họa
+	}
+
+	public static void main(String[] args) {
+//		new Client();
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				new Client();
+			}
+		});
 
 	}
 
@@ -203,7 +259,7 @@ public class Client {
 		x.put("RoomPassword", password);
 		return x;
 	}
-	
+
 	static Map<String, String> GetGamePlay(String token, String roomId) {
 		Map<String, String> x = new HashMap<String, String>();
 		x.put("a", "PlayGame");
