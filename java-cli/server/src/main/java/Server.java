@@ -11,15 +11,17 @@ import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Main {
+public class Server {
 	private static final int PORT = 3000;
 
 	private static ExecutorService executorService = Executors.newCachedThreadPool();
 
-	private static final Logger LOG = LoggerFactory.getLogger(Main.class);
+	private static final Logger LOG = LoggerFactory.getLogger(Server.class);
 
 	static HashMap<String, ClientHandler> activeClientList = new HashMap<String, ClientHandler>();
 
+	static HashMap<String, Room> activeRoomList = new HashMap<String, Room>();
+	
 	// counter for clients
 	static int numberClient = 0;
 
