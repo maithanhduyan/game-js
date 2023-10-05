@@ -10,11 +10,19 @@ import java.util.concurrent.CountDownLatch;
 
 public class Game {
 
-	private static final Logger LOG = LoggerFactory.getLogger(Main.class);
+	public enum GameStatus {
+		DEALING_CARDS, // Đang chia bài
+		STARTED, // Trò chơi đã bắt đầu
+		FINISHED, // Trò chơi đã kết thúc
+		WAITING, // Trò chơi đang đợi người chơi
+		// Thêm các trạng thái khác nếu cần thiết
+	}
 
-	HashMap<String, Player> playerInRoom;
+	private GameStatus status;
 
-	HashMap<String, Room> rooms;
+	private static final Logger LOG = LoggerFactory.getLogger(Game.class);
+
+	private String id;
 
 	boolean newRound = true;
 
@@ -25,71 +33,15 @@ public class Game {
 	// Tạo một đối tượng GameRules
 	private GameRules gameRules;
 
-	public Game() {
+	public Game(String id) {
 		super();
-		LOG.info("Create new game.");
-		this.rooms = new HashMap<String, Room>();
+		this.id = id;
+		this.status = GameStatus.WAITING; // Trạng thái mặc định khi tạo trò chơi mới
 		initGame();
+		LOG.info("Create new game.");
 	}
 
 	void initGame() {
-		// Khởi tạo đối tượng GameRules
-		this.gameRules = new GameRules();
-
-		String roomId = "AAA";
-		Room room = new Room(roomId);
-		this.rooms.put(roomId, room);
-		LOG.info("Create sample room with id:" + room.id);
-
-		// Tạo ra 4 player
-		Player playerA = new Player("A");
-		Player playerB = new Player("B");
-		Player playerC = new Player("C");
-		Player playerD = new Player("D");
-
-		// Cho player vào phòng
-		addPlayerInRoom(playerA, room);
-		addPlayerInRoom(playerB, room);
-		addPlayerInRoom(playerC, room);
-		addPlayerInRoom(playerD, room);
-		LOG.info("Create 4 players " + playerA.getName() + ", " + playerB.getName() + ", " + playerC.getName() + ", "
-				+ playerD.getName());
-
-		// Tạo bộ bài
-		Deck deck = Deck.getInstance();
-
-		// Trộn bài
-		deck.shufle();
-
-		// Lấy bài
-		List<Card> cards = deck.getCards();
-
-		// Chia bài cho 4 người chơi
-		int cardIndex = 0;
-		while (cardIndex < cards.size()) {
-			playerA.addCard(cards.get(cardIndex++));
-			playerB.addCard(cards.get(cardIndex++));
-			playerC.addCard(cards.get(cardIndex++));
-			playerD.addCard(cards.get(cardIndex++));
-		}
-
-		// Hiển thị bài trong tay của mỗi người chơi
-		playerA.displayHand();
-		playerB.displayHand();
-		playerC.displayHand();
-		playerD.displayHand();
-
-		// Bắt đầu chơi
-		// Tạo và khởi chạy luồng cho từng người chơi
-		Thread playerAThread = new Thread(playerA);
-		Thread playerBThread = new Thread(playerB);
-		Thread playerCThread = new Thread(playerC);
-		Thread playerDThread = new Thread(playerD);
-
-		playerAThread.start();
-		playerBThread.start();
-		playerCThread.start();
-		playerDThread.start();
 
 	}
 
@@ -98,22 +50,15 @@ public class Game {
 	}
 
 	public void playGame() {
-		while (!isGameOver()) {
-			for (Player player : this.rooms.get("AAA").players) {
-				if (!player.hasPlayed()) {
-					// Đợi cho đến khi người chơi đánh bài xong
-					while (!player.hasPlayed()) {
-						try {
-							Thread.sleep(100); // Đợi 100 milliseconds trước khi kiểm tra lại
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-					}
-					// Người chơi đã đánh bài xong, chuyển đến người chơi tiếp theo
-					break;
-				}
-			}
-		}
+
+	}
+
+	public GameStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(GameStatus status) {
+		this.status = status;
 	}
 
 	private boolean isGameOver() {
@@ -127,75 +72,4 @@ public class Game {
 		return gameRules.isValidMove(player, currentPlayerCards, lastPlayedCards);
 	}
 
-	boolean addPlayerInRoom(Player player, Room room) {
-		if (this.rooms.containsKey(room.id)) {
-			int numOfPlayerInRoom = room.getNum();
-			room.addPlayer(player);
-			if (room.getNum() > numOfPlayerInRoom) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	// Phương thức bắt đầu tính toán thời gian suy nghĩ
-//	public void startThinkingTime(Player player) {
-//		int maxThinkingTime = 20000; // 20 giây
-//		CountDownLatch latch = new CountDownLatch(1);
-//
-//		executorService.submit(() -> {
-//			try {
-//				long startTime = System.currentTimeMillis();
-//				while (System.currentTimeMillis() - startTime < maxThinkingTime) {
-//					// Kiểm tra nếu người chơi đã đánh bài xong
-//					if (player.hasPlayed()) {
-//						latch.countDown(); // Giảm đếm để kết thúc luồng
-//						return;
-//					}
-//					// Đợi 1 giây trước khi kiểm tra lại
-//					Thread.sleep(1000);
-//				}
-//				// Thời gian suy nghĩ đã hết, thực hiện các hành động liên quan
-//				// ...
-//			} catch (InterruptedException e) {
-//				e.printStackTrace();
-//			}
-//		});
-//
-//		try {
-//			latch.await(); // Chờ đến khi người chơi đánh bài xong hoặc hết thời gian suy nghĩ
-//		} catch (InterruptedException e) {
-//			e.printStackTrace();
-//		}
-//	}
-
-	public void startThinkingTime(Player player) {
-		int maxThinkingTime = 20000; // 20 giây
-		CountDownLatch latch = new CountDownLatch(1);
-
-		executorService.submit(() -> {
-			try {
-				long startTime = System.currentTimeMillis();
-				while (System.currentTimeMillis() - startTime < maxThinkingTime) {
-					// Kiểm tra nếu người chơi đã đánh bài xong
-					if (player.hasPlayed()) {
-						latch.countDown(); // Giảm đếm để kết thúc luồng
-						return;
-					}
-					// Đợi 1 giây trước khi kiểm tra lại
-					Thread.sleep(1000);
-				}
-				// Thời gian suy nghĩ đã hết, thực hiện các hành động liên quan
-				// ...
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		});
-
-		try {
-			latch.await(); // Chờ đến khi người chơi đánh bài xong hoặc hết thời gian suy nghĩ
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
 }
