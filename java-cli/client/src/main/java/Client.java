@@ -107,6 +107,11 @@ public class Client {
 								// write on the output stream
 								dos.writeUTF(JSONObject.toJSONString(sendData));
 								break;
+							case 6:
+								sendData = GetGamePlay(REQUEST.get("Token").toString(),REQUEST.get("RoomId").toString()); 
+								// write on the output stream
+								dos.writeUTF(JSONObject.toJSONString(sendData));
+								break;
 							default:
 								LOG.info("Nhập Không Hợp Lệ");
 								// break;
@@ -196,6 +201,14 @@ public class Client {
 		x.put("Token", token);
 		x.put("RoomId", roomId);
 		x.put("RoomPassword", password);
+		return x;
+	}
+	
+	static Map<String, String> GetGamePlay(String token, String roomId) {
+		Map<String, String> x = new HashMap<String, String>();
+		x.put("a", "PlayGame");
+		x.put("Token", token);
+		x.put("RoomId", roomId);
 		return x;
 	}
 
