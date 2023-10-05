@@ -20,7 +20,6 @@ public class ClientHandler implements Runnable {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ClientHandler.class);
 
-
 	private static final long TIMEOUT = 1 * 60 * 1000; // Thời hạn 5 phút
 
 	Scanner scn = new Scanner(System.in);
@@ -86,43 +85,21 @@ public class ClientHandler implements Runnable {
 							// Vào phòng
 							if (clientRequest.get("a").equals("JoinRoom") && clientRequest.containsKey("Token")) {
 								LOG.info("JoinRoom");
-								if (clientRequest.containsKey("RoomId") && clientRequest.containsKey("RoomPassword")) {
-									// Kiểm tra roomId có tồn tại?
-									String roomId = clientRequest.get("RoomId").toString();
-									if (Server.activeRoomList.containsKey(roomId)) {
-										// Có phòng
-										// Cho vào
-										response.put("RoomId", roomId);
-										
-										// Lấy trạng thái game
-										
-										// send json to client
-										dataOutputStream.writeUTF(JSONObject.toJSONString(response));
-									} else {
-										ERR.getOrDefault("error", "Không tồn tại.");
-										dataOutputStream.writeUTF(JSONObject.toJSONString(ERR));
-									}
 
-								}
+								processJoinRoom(clientRequest, dataOutputStream);
+
 							}
 
-							// Chia bài
-							if (clientRequest.containsKey("a") && clientRequest.containsKey("Token")
+							// Vòng lập Chơi Game
+							if (clientRequest.get("a").equals("PlayGame") && clientRequest.containsKey("Token")
 									&& clientRequest.containsKey("RoomId")) {
-								// Nếu Trong Phòng Có 2 người chơi trạng thái sẵn sàng thì tạo game và chia bài
-								// Lấy phòng từ RoomId
-								String roomId = clientRequest.get("RoomId").toString();
-								Room room = Server.activeRoomList.get(roomId);
-								if (room.players.size() > 2) {
-									LOG.info("Tạo Game và chia bài");
-									// send json to client
-									response.put("Status", "InRoom");
-									dataOutputStream.writeUTF(JSONObject.toJSONString(response));
-								}
+								LOG.info("PLAY GAME");
+
+								processPlayGame(clientRequest, dataOutputStream);
 
 							}
 
-						}
+						} // User đã đăng nhập
 
 					} else {
 						ERR.getOrDefault("error", "Chưa Đăng Nhập");
@@ -161,24 +138,64 @@ public class ClientHandler implements Runnable {
 	}
 
 	void processCreateRoom(JSONObject request, DataOutputStream dataOutputStream) throws IOException {
-		Map<String, String> res = new HashMap<String, String>();
 		// Tạo phòng
 		if (request.get("a").equals("CreateRoom") && request.get("Token").equals(this.name)) {
 			LOG.info("CreateRoom");
-			if (!request.containsKey("RoomId")) {
-				String roomId = UUID.randomUUID().toString();
-				Room room = new Room(roomId);
-				room.addPlayer(this.player);
-				Server.activeRoomList.put(roomId, room);
-				LOG.info("Tạo phòng: " + roomId + " thành công");
-				this.response.put("RoomId", roomId);
+			
+			if (!Server.activeRoomList.containsKey(this.name)) {
+				Room room = new Room(this.name);
+				Server.activeRoomList.put(this.name, room);
+				LOG.info("Tạo phòng: " + this.name + " thành công");
+				this.response.put("RoomId", this.name);
 				
-				// Tạo game mới 
+				// Tạo game mới
 				room.createGame();
+				room.addPlayer(this.name);
 				this.response.put("GameStatus", room.getGame().getStatus().name());
 				// send json to client
 				dataOutputStream.writeUTF(JSONObject.toJSONString(this.response));
 			}
+		}
+	}
+
+	void processJoinRoom(JSONObject request, DataOutputStream dataOutputStream) throws IOException {
+		if (request.containsKey("RoomId") && request.containsKey("RoomPassword")) {
+			// Kiểm tra roomId có tồn tại?
+			String roomId = request.get("RoomId").toString();
+
+			if (Server.activeRoomList.containsKey(roomId)) {
+				// Có phòng
+				// Cho vào
+				this.response.put("RoomId", roomId);
+				Room room = Server.activeRoomList.get(roomId);
+				room.addPlayer(this.name);
+				this.response.put("GameStatus", room.getGame().getStatus().name());
+				// send json to client
+				dataOutputStream.writeUTF(JSONObject.toJSONString(this.response));
+			} else {
+				ERR.getOrDefault("error", "Không tồn tại.");
+				dataOutputStream.writeUTF(JSONObject.toJSONString(ERR));
+			}
+
+		} // JoinRoom
+	}
+
+	void processPlayGame(JSONObject request, DataOutputStream dataOutputStream) throws IOException {
+
+		String roomId = request.get("RoomId").toString();
+
+		if (Server.activeRoomList.containsKey(roomId)) {
+			Room room = Server.activeRoomList.get(roomId);
+
+			// Kiểm tra trạng thái game
+			this.response.replace("GameStatus", room.getStatus().toString());
+			LOG.info("Check game status: " + room.getStatus().toString());
+			// Kiểm tra đến lượt
+			room.game.playGame();
+			// Kiểm tra nước đi trước
+
+			// send json to client
+			dataOutputStream.writeUTF(JSONObject.toJSONString(this.response));
 		}
 	}
 

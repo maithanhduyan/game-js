@@ -27,7 +27,7 @@ public class Deck {
 	void initDeck() {
 		for (int i = 0; i < SUITS_ORDER.length; i++) {
 			for (int j = 0; j < RANKS_ORDER.length; j++) {
-				System.out.println(SUITS_ORDER[i] + RANKS_ORDER[j]);
+//				System.out.println(SUITS_ORDER[i] + RANKS_ORDER[j]);
 				this.cards.add(new Card(SUITS_ORDER[i], RANKS_ORDER[j]));
 			}
 		}

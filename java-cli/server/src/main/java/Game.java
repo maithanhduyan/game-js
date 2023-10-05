@@ -1,21 +1,19 @@
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.CountDownLatch;
-
 public class Game {
+
+	List<Player> players;
 
 	public enum GameStatus {
 		DEALING_CARDS, // Đang chia bài
 		STARTED, // Trò chơi đã bắt đầu
-		FINISHED, // Trò chơi đã kết thúc
 		WAITING, // Trò chơi đang đợi người chơi
-		// Thêm các trạng thái khác nếu cần thiết
+		PLAYING, // Thêm các trạng thái khác nếu cần thiết
+		FINISHED // Trò chơi đã kết thúc
 	}
 
 	private GameStatus status;
@@ -26,9 +24,7 @@ public class Game {
 
 	boolean newRound = true;
 
-	private ExecutorService executorService;
-
-	private CountDownLatch turnLatch;
+	private Deck deck;
 
 	// Tạo một đối tượng GameRules
 	private GameRules gameRules;
@@ -36,12 +32,21 @@ public class Game {
 	public Game(String id) {
 		super();
 		this.id = id;
-		this.status = GameStatus.WAITING; // Trạng thái mặc định khi tạo trò chơi mới
+		this.status = GameStatus.STARTED; // Trạng thái mặc định khi tạo trò chơi mới
+		players = new ArrayList<Player>();
 		initGame();
 		LOG.info("Create new game.");
 	}
 
 	void initGame() {
+		this.deck.getInstance();
+	}
+
+	void addPlayer(Player player) {
+		if (this.status == GameStatus.STARTED) {
+			this.players.add(player);
+			this.status = GameStatus.WAITING;
+		}
 
 	}
 
@@ -50,6 +55,23 @@ public class Game {
 	}
 
 	public void playGame() {
+		if (players.size() > 2 && this.status == GameStatus.WAITING) {
+			LOG.info("Chia bài");
+			LOG.info("Trộn bài");
+			this.deck.shufle();
+			LOG.info(deck.getCards().toString());
+			for (int i = 0; i < deck.getCards().size(); i++) {
+				for (int j = 0; j < players.size(); j++) {
+					players.get(j).addCard(deck.getCards().get(i));
+				}
+			}
+			this.setStatus(GameStatus.DEALING_CARDS);
+		}
+		if (this.status == GameStatus.DEALING_CARDS) {
+			// Nếu chia xong
+			// Kiểm tra player nào đi trước
+			this.setStatus(GameStatus.PLAYING);
+		}
 
 	}
 

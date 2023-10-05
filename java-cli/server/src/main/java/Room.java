@@ -1,10 +1,10 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Room {
 	String id;
 	// Danh sách người chơi
-	List<Player> players;
+	private Map<String, Player> players;
 	int num;
 	private int maxPlayer = 4;
 
@@ -23,22 +23,20 @@ public class Room {
 	public Room(String id) {
 		super();
 		this.id = id;
-		this.players = new ArrayList<Player>();
 		this.status = RoomStatus.WAITING;
+		this.players = new HashMap<String, Player>();
 	}
 
 	void createGame() {
 		this.game = new Game(this.id);
 	}
 	
-	public List<Player> addPlayer(Player player) {
-
-		if (this.players.size() < maxPlayer) {
-			this.players.add(player);
-
-			return this.players;
+	void addPlayer(String id) {
+		if(this.players.size() < maxPlayer) {
+			Player player = new Player(id);
+			this.players.put(id, player);
+			this.game.addPlayer(player);
 		}
-		return null;
 	}
 
 	public String getId() {
@@ -68,6 +66,5 @@ public class Room {
 	public Game getGame() {
 		return game;
 	}
-	
-	
+
 }
