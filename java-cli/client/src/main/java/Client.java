@@ -47,7 +47,7 @@ public class Client {
 	private static Map<String, String> receiveData;
 
 	// Địa chỉ IP hoặc tên máy chủ của server
-	private static String serverAddress = "10.220.56.18";
+	private static String serverAddress = "10.220.56.16";
 
 	private ClientUI clientUI;
 
