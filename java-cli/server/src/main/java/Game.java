@@ -20,8 +20,6 @@ public class Game {
 
 	private static final Logger LOG = LoggerFactory.getLogger(Game.class);
 
-	private String id;
-
 	boolean newRound = true;
 
 	private Deck deck;
@@ -31,7 +29,6 @@ public class Game {
 
 	public Game(String id) {
 		super();
-		this.id = id;
 		this.status = GameStatus.STARTED; // Trạng thái mặc định khi tạo trò chơi mới
 		players = new ArrayList<Player>();
 		initGame();
@@ -39,7 +36,7 @@ public class Game {
 	}
 
 	void initGame() {
-		this.deck.getInstance();
+		Deck.getInstance();
 	}
 
 	void addPlayer(Player player) {
