@@ -1,11 +1,11 @@
 
-
 import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.websocket.Endpoint;
 import jakarta.websocket.server.ServerApplicationConfig;
 import jakarta.websocket.server.ServerEndpointConfig;
+import websocket.drawboard.DrawboardEndpoint;
 
 public class ExamplesConfig implements ServerApplicationConfig {
 
@@ -20,7 +20,7 @@ public class ExamplesConfig implements ServerApplicationConfig {
 				results.add(clazz);
 			}
 		}
-		
+
 		return results;
 	}
 
@@ -28,7 +28,9 @@ public class ExamplesConfig implements ServerApplicationConfig {
 	public Set<ServerEndpointConfig> getEndpointConfigs(Set<Class<? extends Endpoint>> scanned) {
 
 		Set<ServerEndpointConfig> result = new HashSet<>();
-
+		if (scanned.contains(DrawboardEndpoint.class)) {
+			result.add(ServerEndpointConfig.Builder.create(DrawboardEndpoint.class, "/websocket/drawboard").build());
+		}
 
 		return result;
 	}
