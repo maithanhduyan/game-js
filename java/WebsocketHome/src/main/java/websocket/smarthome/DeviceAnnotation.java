@@ -13,6 +13,7 @@ import jakarta.websocket.server.ServerEndpoint;
 
 @ServerEndpoint(value = "/websocket/actions")
 public class DeviceAnnotation {
+	
 	DeviceSessionHandler deviceSessionHandler = new DeviceSessionHandler();
 
 	@OnOpen
