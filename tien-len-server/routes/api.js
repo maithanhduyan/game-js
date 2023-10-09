@@ -1,6 +1,7 @@
 const express = require('express')
 const userController = require('../controllers/user-controller')
 const authenController = require('../controllers/authen-controller')
+const authenticateToken = require('../middlewares/authen-api-middleware')
 apiRouter = express.Router()
 
 apiRouter.get("/healthCheck", (req, res) => {
@@ -62,5 +63,6 @@ apiRouter.post('/join-room/:roomId', (req, res) => {
 
 // Xác thực người chơi và tạo token JWT
 apiRouter.post('/login', authenController.authen);
+apiRouter.post('/logout', authenticateToken, authenController.logout);
 apiRouter.post('/signup', userController.createUser);
 module.exports = apiRouter 
