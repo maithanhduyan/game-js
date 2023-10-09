@@ -9,6 +9,13 @@
 	<name>WebsocketHome</name>
 	<description>WebsocketHome</description>
 
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
+	</properties>
+
 	<dependencies>
 		<!--
 		https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple -->
@@ -34,4 +41,18 @@
 
 	</dependencies>
 
+	<build>
+		<finalName>WebsocketHome</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.1</version> <!-- Phiên bản của Maven Compiler Plugin -->
+				<configuration>
+					<source>${maven.compiler.source}</source>
+					<target>${maven.compiler.target}</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>
