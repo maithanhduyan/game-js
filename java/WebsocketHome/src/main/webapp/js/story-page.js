@@ -5,7 +5,7 @@ function initialize() {
 	var ctx = canvas.getContext("2d");
 	var img = document.getElementById("background_img");
 	ctx.drawImage(img, 0, 0);
-	socket = new WebSocket("ws://localhost:8080/WebsocketHome/websocket/story/notifications");
+	socket = new WebSocket("ws://"+ window.location.host +"/WebsocketHome/websocket/story/notifications");
 	socket.onmessage = onSocketMessage;
 	console.log("");
 }
