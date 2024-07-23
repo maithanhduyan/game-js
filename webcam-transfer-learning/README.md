@@ -8,3 +8,10 @@ using an internal mobilenet activation to predict 4 different classes from the
 webcam defined by the user.
 
 [See this example live!](https://storage.googleapis.com/tfjs-examples/webcam-transfer-learning/dist/index.html)
+
+- Install NodeJS
+- Using npm to install yarn
+> npm install --global yarn
+- run:
+> yarn install
+> yarn watch
